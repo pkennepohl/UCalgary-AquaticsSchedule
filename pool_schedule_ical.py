@@ -220,6 +220,11 @@ def main():
         print("Failed to fetch schedule")
         return False
     
+    # Save HTML for debugging
+    with open('schedule_debug.html', 'w') as f:
+        f.write(html)
+    print("DEBUG: HTML saved to schedule_debug.html")
+    
     print("Parsing schedule...")
     sessions = parse_schedule(html)
     
