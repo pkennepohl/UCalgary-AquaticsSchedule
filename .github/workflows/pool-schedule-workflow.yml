@@ -41,11 +41,13 @@ jobs:
           git commit -m "DEBUG: Schedule HTML dump - $(date -u +'%Y-%m-%d %H:%M UTC')" || true
           git push || true
       
-      - name: Check if schedule changed
+      - name: Check if schedule changed or is new
         id: check_changes
-        if: hashFiles('pool-schedule.ics') != ''
         run: |
-          if git diff --quiet pool-schedule.ics; then
+          if [ ! -f pool-schedule.ics ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "New schedule file detected"
+          elif git diff --quiet pool-schedule.ics; then
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "No changes to schedule"
           else
