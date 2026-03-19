@@ -218,6 +218,51 @@ def parse_time_range(time_str):
             if end_hour == 12:
                 end_hour = 0
     
+    elif pattern_used == patterns[7]:  # "H AM/PM - H AM/PM" (pattern 8)
+        start_hour, start_ampm, end_hour, end_ampm = groups
+        start_hour = int(start_hour)
+        start_min = 0
+        end_hour = int(end_hour)
+        end_min = 0
+        start_ampm_normalized = normalize_ampm(start_ampm)
+        end_ampm_normalized = normalize_ampm(end_ampm)
+        
+        if start_ampm_normalized == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_normalized == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        if end_ampm_normalized == 'pm' and end_hour != 12:
+            end_hour += 12
+        elif end_ampm_normalized == 'am' and end_hour == 12:
+            end_hour = 0
+    
+    elif pattern_used == patterns[8]:  # "HH:MM AM/PM" (single time, pattern 9)
+        start_hour, start_min, start_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        start_ampm_normalized = normalize_ampm(start_ampm)
+        
+        if start_ampm_normalized == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_normalized == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        # For single time, we can't proceed without an end time
+        return None
+    
+    elif pattern_used == patterns[9]:  # "H AM/PM" (single time, pattern 10)
+        start_hour, start_ampm = groups
+        start_hour = int(start_hour)
+        start_ampm_normalized = normalize_ampm(start_ampm)
+        
+        if start_ampm_normalized == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_normalized == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        # For single time, we can't proceed without an end time
+        return None
+    
     # Validate the result
     if start_hour < 0 or start_hour > 23 or end_hour < 0 or end_hour > 23:
         return None
