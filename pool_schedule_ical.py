@@ -296,6 +296,115 @@ def parse_time_range(time_str):
     
     return (start_hour, start_min, end_hour, end_min)
 
+def apply_chronological_correction(sessions):
+    """
+    Validate and correct AM/PM errors within each day.
+    All sessions on the same day must be in chronological order (regardless of type/pool).
+    """
+    from collections import defaultdict
+    
+    # Group by day (month, day_num)
+    groups = defaultdict(list)
+    for idx, session in enumerate(sessions):
+        key = (session['month'], session['day_num'])
+        groups[key].append((idx, session))
+    
+    corrections = []
+    
+    for key, group in groups.items():
+        month, day_num = key
+        
+        # Check each session against the previous one
+        for i in range(1, len(group)):
+            prev_idx, prev_session = group[i-1]
+            curr_idx, curr_session = group[i]
+            
+            prev_end_mins = prev_session['end_hour'] * 60 + prev_session['end_min']
+            curr_start_mins = curr_session['start_hour'] * 60 + curr_session['start_min']
+            
+            # Check if current session starts before previous ends
+            if curr_start_mins < prev_end_mins:
+                # Try flipping the CURRENT session first
+                flipped_start = curr_session['start_hour']
+                flipped_end = curr_session['end_hour']
+                
+                flip_worked = False
+                
+                # Try flipping current session
+                if flipped_start >= 12 and flipped_end >= 12:
+                    # Both PM, flip to AM
+                    flipped_start = flipped_start - 12 if flipped_start > 12 else 12
+                    flipped_end = flipped_end - 12 if flipped_end > 12 else 12
+                elif flipped_start < 12 and flipped_end < 12:
+                    # Both AM, flip to PM
+                    flipped_start = flipped_start + 12
+                    flipped_end = flipped_end + 12
+                else:
+                    # Mixed AM/PM on current, can't flip - try prev instead
+                    flipped_start = curr_session['start_hour']
+                    flipped_end = curr_session['end_hour']
+                
+                flipped_start_mins = flipped_start * 60 + curr_session['start_min']
+                flipped_end_mins = flipped_end * 60 + curr_session['end_min']
+                
+                # If flipping current works, apply it
+                if flipped_start_mins >= prev_end_mins:
+                    original_str = f"{curr_session['start_hour']:02d}:{curr_session['start_min']:02d} - {curr_session['end_hour']:02d}:{curr_session['end_min']:02d}"
+                    flipped_str = f"{flipped_start:02d}:{curr_session['start_min']:02d} - {flipped_end:02d}:{curr_session['end_min']:02d}"
+                    
+                    corrections.append(
+                        f"  {curr_session['day_name']} {month} {day_num} | {curr_session['swim_type'][:15]:15} | "
+                        f"{curr_session['pool']:4} | {original_str} → {flipped_str}"
+                    )
+                    
+                    curr_session['start_hour'] = flipped_start
+                    curr_session['end_hour'] = flipped_end
+                    group[i] = (curr_idx, curr_session)
+                    sessions[curr_idx] = curr_session
+                    flip_worked = True
+                
+                # If flipping current didn't work, try flipping PREVIOUS session
+                if not flip_worked:
+                    prev_flipped_start = prev_session['start_hour']
+                    prev_flipped_end = prev_session['end_hour']
+                    
+                    if prev_flipped_start >= 12 and prev_flipped_end >= 12:
+                        prev_flipped_start = prev_flipped_start - 12 if prev_flipped_start > 12 else 12
+                        prev_flipped_end = prev_flipped_end - 12 if prev_flipped_end > 12 else 12
+                    elif prev_flipped_start < 12 and prev_flipped_end < 12:
+                        prev_flipped_start = prev_flipped_start + 12
+                        prev_flipped_end = prev_flipped_end + 12
+                    else:
+                        # Mixed AM/PM, can't flip
+                        continue
+                    
+                    prev_flipped_end_mins = prev_flipped_end * 60 + prev_session['end_min']
+                    
+                    # Check if flipping previous fixes the order
+                    if curr_start_mins >= prev_flipped_end_mins:
+                        original_str = f"{prev_session['start_hour']:02d}:{prev_session['start_min']:02d} - {prev_session['end_hour']:02d}:{prev_session['end_min']:02d}"
+                        flipped_str = f"{prev_flipped_start:02d}:{prev_session['start_min']:02d} - {prev_flipped_end:02d}:{prev_session['end_min']:02d}"
+                        
+                        corrections.append(
+                            f"  {prev_session['day_name']} {month} {day_num} | {prev_session['swim_type'][:15]:15} | "
+                            f"{prev_session['pool']:4} | {original_str} → {flipped_str}"
+                        )
+                        
+                        prev_session['start_hour'] = prev_flipped_start
+                        prev_session['end_hour'] = prev_flipped_end
+                        group[i-1] = (prev_idx, prev_session)
+                        sessions[prev_idx] = prev_session
+    
+    if corrections:
+        print("\n" + "=" * 120)
+        print("AM/PM CORRECTIONS MADE (Chronological Order Validation)")
+        print("=" * 120)
+        for correction in corrections:
+            print(correction)
+        print("=" * 120 + "\n")
+    
+    return sessions
+
 def parse_schedule(html):
     """Parse the HTML and extract schedule."""
     if not html:
@@ -446,6 +555,9 @@ def main():
     sessions = parse_schedule(html)
     
     print(f"Found {len(sessions)} sessions")
+    
+    print("Validating chronological order...")
+    sessions = apply_chronological_correction(sessions)
     
     if sessions:
         ics_content = create_ics(sessions)
