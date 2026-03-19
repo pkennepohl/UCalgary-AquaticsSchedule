@@ -44,10 +44,10 @@ jobs:
       - name: Check if schedule changed or is new
         id: check_changes
         run: |
-          if [ ! -f pool-schedule.ics ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-            echo "New schedule file detected"
-          elif git diff --quiet pool-schedule.ics; then
+          # Add the file to git so we can check if it changed
+          git add pool-schedule.ics
+          
+          if git diff --quiet --cached pool-schedule.ics; then
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "No changes to schedule"
           else
@@ -58,6 +58,5 @@ jobs:
       - name: Commit and push schedule changes
         if: steps.check_changes.outputs.changed == 'true'
         run: |
-          git add pool-schedule.ics
           git commit -m "Update pool schedule - $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
