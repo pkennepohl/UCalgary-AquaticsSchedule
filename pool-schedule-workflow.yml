@@ -1,0 +1,51 @@
+name: Update Pool Schedule
+
+on:
+  schedule:
+    # Run daily at 6 AM Calgary time (1 PM UTC, accounting for daylight saving)
+    - cron: '0 13 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-schedule:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4
+      
+      - name: Fetch and generate schedule
+        run: python3 pool_schedule_ical.py
+      
+      - name: Check if schedule changed
+        id: check_changes
+        run: |
+          if git diff --quiet pool-schedule.ics; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes to schedule"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Schedule has been updated"
+          fi
+      
+      - name: Configure git
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config user.name "Pool Schedule Bot"
+          git config user.email "action@github.com"
+      
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git add pool-schedule.ics
+          git commit -m "Update pool schedule - $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
