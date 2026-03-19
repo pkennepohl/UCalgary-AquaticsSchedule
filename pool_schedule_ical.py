@@ -298,23 +298,24 @@ def parse_time_range(time_str):
 
 def apply_chronological_correction(sessions):
     """
-    Validate and correct AM/PM errors within each day.
-    All sessions on the same day must be in chronological order (regardless of type/pool).
+    Validate and correct AM/PM errors within each day AND swim type.
+    Sessions of the same type on the same day must be in chronological order.
+    Different types can overlap (e.g., Adult/Youth and Family sessions).
     """
     from collections import defaultdict
     
-    # Group by day (month, day_num)
+    # Group by day AND swim type (month, day_num, swim_type)
     groups = defaultdict(list)
     for idx, session in enumerate(sessions):
-        key = (session['month'], session['day_num'])
+        key = (session['month'], session['day_num'], session['swim_type'])
         groups[key].append((idx, session))
     
     corrections = []
     
     for key, group in groups.items():
-        month, day_num = key
+        month, day_num, swim_type = key
         
-        # Check each session against the previous one
+        # Check each session against the previous one (only within same type)
         for i in range(1, len(group)):
             prev_idx, prev_session = group[i-1]
             curr_idx, curr_session = group[i]
@@ -353,7 +354,7 @@ def apply_chronological_correction(sessions):
                     flipped_str = f"{flipped_start:02d}:{curr_session['start_min']:02d} - {flipped_end:02d}:{curr_session['end_min']:02d}"
                     
                     corrections.append(
-                        f"  {curr_session['day_name']} {month} {day_num} | {curr_session['swim_type'][:15]:15} | "
+                        f"  {curr_session['day_name']} {month} {day_num} | {swim_type[:15]:15} | "
                         f"{curr_session['pool']:4} | {original_str} → {flipped_str}"
                     )
                     
@@ -386,7 +387,7 @@ def apply_chronological_correction(sessions):
                         flipped_str = f"{prev_flipped_start:02d}:{prev_session['start_min']:02d} - {prev_flipped_end:02d}:{prev_session['end_min']:02d}"
                         
                         corrections.append(
-                            f"  {prev_session['day_name']} {month} {day_num} | {prev_session['swim_type'][:15]:15} | "
+                            f"  {prev_session['day_name']} {month} {day_num} | {swim_type[:15]:15} | "
                             f"{prev_session['pool']:4} | {original_str} → {flipped_str}"
                         )
                         
@@ -397,7 +398,7 @@ def apply_chronological_correction(sessions):
     
     if corrections:
         print("\n" + "=" * 120)
-        print("AM/PM CORRECTIONS MADE (Chronological Order Validation)")
+        print("AM/PM CORRECTIONS MADE (Chronological Order Validation - SAME SWIM TYPE ONLY)")
         print("=" * 120)
         for correction in corrections:
             print(correction)
