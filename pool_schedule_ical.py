@@ -26,12 +26,10 @@ def fetch_schedule():
         return None
 
 def parse_schedule(html):
-    """Parse the HTML and extract all sessions with proper dates."""
+    """Parse the HTML and extract all sessions from nested list structure."""
     soup = BeautifulSoup(html, 'html.parser')
-    text = soup.get_text()
     
     sessions = []
-    
     current_year = datetime.now().year
     month_map = {
         'January': 1, 'February': 2, 'March': 3, 'April': 4,
@@ -39,128 +37,101 @@ def parse_schedule(html):
         'September': 9, 'October': 10, 'November': 11, 'December': 12
     }
     
-    # Find the start of the schedule section
-    start_idx = text.find('Adult/Youth Lane Swim')
-    if start_idx == -1:
-        return sessions
-    
-    # Find the end (Family and Lane Swim or end of content)
-    end_idx = text.find('Family and', start_idx)
-    if end_idx == -1:
-        end_idx = len(text)
-    
-    schedule_text = text[start_idx:end_idx]
-    lines = schedule_text.split('\n')
-    
-    current_date = None
-    
-    for line in lines:
-        line = line.strip()
-        if not line:
+    # Find all <p> tags that contain "Adult/Youth Lane Swim"
+    for p_tag in soup.find_all('p'):
+        if 'Adult/Youth Lane Swim' not in p_tag.get_text():
             continue
         
-        # Try to match day/date: "Monday, January 5" or "Monday, January 5"
-        day_match = re.search(r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)[,\s]+(\w+)\s+(\d+)', line, re.IGNORECASE)
-        if day_match:
+        # Find the next <ul> sibling which contains the schedule
+        ul = p_tag.find_next('ul')
+        if not ul:
+            continue
+        
+        # Each top-level <li> is a day
+        for day_li in ul.find_all('li', recursive=False):
+            day_text = day_li.get_text(strip=True)
+            
+            # Extract day and date: "Monday, March 16"
+            day_match = re.match(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)[,\s]+(\w+)\s+(\d+)', day_text, re.IGNORECASE)
+            if not day_match:
+                continue
+            
             day_name = day_match.group(1).strip().capitalize()
             month_name = day_match.group(2).strip()
             day_num = int(day_match.group(3))
             
             month = month_map.get(month_name, 1)
             year = current_year
-            # If month is before current month, assume next year
             if month < datetime.now().month:
                 year += 1
             
-            current_date = {
-                'day': day_name,
-                'month': month,
-                'day_num': day_num,
-                'year': year
-            }
-            continue
-        
-        # Try to match time slot with pool: "7:30 - 9:30 a.m. 25m"
-        if current_date and re.search(r'\d{1,2}', line):
-            pool_match = re.search(r'(25m|50m)', line)
-            if not pool_match:
+            # Find nested <ul> with time slots
+            nested_ul = day_li.find('ul')
+            if not nested_ul:
                 continue
             
-            is_limited = 'limited' in line.lower()
-            
-            # Extract time portion (before pool size)
-            pool_pos = line.index(pool_match.group(1))
-            time_part = line[:pool_pos].strip()
-            
-            # Parse times: handle "7:30 - 9:30 a.m." or "11 a.m. - 2 p.m."
-            # More flexible regex
-            time_match = re.search(r'(\d{1,2}):?(\d{2})?\s*-\s*(\d{1,2}):?(\d{2})?\s*([ap])\.?m\.?', time_part, re.IGNORECASE)
-            if not time_match:
-                continue
-            
-            start_hour = int(time_match.group(1))
-            start_min = int(time_match.group(2) or 0)
-            end_hour = int(time_match.group(3))
-            end_min = int(time_match.group(4) or 0)
-            am_pm_char = time_match.group(5).lower()
-            
-            # Determine if AM or PM based on which period the line contains
-            # If line has "p.m" after the end time, both times are PM
-            # If line has "a.m" after the end time, both times are AM
-            # Look at what comes after end_hour
-            remaining = time_part[time_match.end():]
-            
-            # Default: use the am_pm_char found
-            is_pm = (am_pm_char == 'p')
-            
-            # Check if there's another am/pm indicator
-            second_ampm = re.search(r'([ap])\.?m\.?', remaining, re.IGNORECASE)
-            if second_ampm:
-                is_pm = (second_ampm.group(1).lower() == 'p')
-            
-            # Adjust hours
-            if is_pm and start_hour != 12:
-                start_hour += 12
-            if is_pm and end_hour != 12:
-                end_hour += 12
-            if not is_pm and start_hour == 12:
-                start_hour = 0
-            if not is_pm and end_hour == 12:
-                end_hour = 0
-            
-            pool = pool_match.group(1)
-            
-            try:
-                start_dt = datetime(
-                    current_date['year'],
-                    current_date['month'],
-                    current_date['day_num'],
-                    start_hour,
-                    start_min
-                )
+            # Each nested <li> is a time slot
+            for time_li in nested_ul.find_all('li', recursive=False):
+                time_text = time_li.get_text(strip=True)
                 
-                end_dt = datetime(
-                    current_date['year'],
-                    current_date['month'],
-                    current_date['day_num'],
-                    end_hour,
-                    end_min
-                )
+                # Extract pool and check for limited lanes
+                pool_match = re.search(r'(25m|50m)', time_text)
+                if not pool_match:
+                    continue
                 
-                session = {
-                    'day': current_date['day'],
-                    'date_str': f"{current_date['month']:02d}/{current_date['day_num']:02d}/{current_date['year']}",
-                    'start_dt': start_dt,
-                    'end_dt': end_dt,
-                    'time_str': time_part,
-                    'pool': pool,
-                    'limited': is_limited
-                }
+                pool = pool_match.group(1)
+                is_limited = 'limited' in time_text.lower()
                 
-                sessions.append(session)
-            except (ValueError, TypeError):
-                # Skip invalid dates
-                continue
+                # Extract time portion
+                pool_pos = time_text.index(pool)
+                time_part = time_text[:pool_pos].strip()
+                
+                # Parse times
+                time_match = re.search(r'(\d{1,2}):?(\d{2})?\s*-\s*(\d{1,2}):?(\d{2})?\s*([ap])\.?m\.?', time_part, re.IGNORECASE)
+                if not time_match:
+                    continue
+                
+                start_hour = int(time_match.group(1))
+                start_min = int(time_match.group(2) or 0)
+                end_hour = int(time_match.group(3))
+                end_min = int(time_match.group(4) or 0)
+                am_pm_char = time_match.group(5).lower()
+                
+                is_pm = (am_pm_char == 'p')
+                
+                # Check for second am/pm indicator
+                remaining = time_part[time_match.end():]
+                second_ampm = re.search(r'([ap])\.?m\.?', remaining, re.IGNORECASE)
+                if second_ampm:
+                    is_pm = (second_ampm.group(1).lower() == 'p')
+                
+                # Adjust hours
+                if is_pm and start_hour != 12:
+                    start_hour += 12
+                if is_pm and end_hour != 12:
+                    end_hour += 12
+                if not is_pm and start_hour == 12:
+                    start_hour = 0
+                if not is_pm and end_hour == 12:
+                    end_hour = 0
+                
+                try:
+                    start_dt = datetime(year, month, day_num, start_hour, start_min)
+                    end_dt = datetime(year, month, day_num, end_hour, end_min)
+                    
+                    session = {
+                        'day': day_name,
+                        'date_str': f"{month:02d}/{day_num:02d}/{year}",
+                        'start_dt': start_dt,
+                        'end_dt': end_dt,
+                        'time_str': time_part,
+                        'pool': pool,
+                        'limited': is_limited
+                    }
+                    
+                    sessions.append(session)
+                except (ValueError, TypeError):
+                    continue
     
     return sessions
 
