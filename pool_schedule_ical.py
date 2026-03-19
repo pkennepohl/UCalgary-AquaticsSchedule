@@ -32,9 +32,6 @@ def parse_schedule(html):
     
     sessions = []
     
-    # Split by "Adult/Youth Lane Swim"
-    sections = text.split('Adult/Youth Lane Swim')
-    
     current_year = datetime.now().year
     month_map = {
         'January': 1, 'February': 2, 'March': 3, 'April': 4,
@@ -42,66 +39,81 @@ def parse_schedule(html):
         'September': 9, 'October': 10, 'November': 11, 'December': 12
     }
     
-    for section in sections[1:]:
-        lines = [l.strip() for l in section.split('\n') if l.strip()]
-        current_date = None
+    # Split into lines and process
+    lines = [l.strip() for l in text.split('\n') if l.strip()]
+    
+    current_date = None
+    in_schedule_section = False
+    
+    for i, line in enumerate(lines):
+        # Skip until we hit "Adult/Youth Lane Swim"
+        if 'Adult/Youth Lane Swim' in line:
+            in_schedule_section = True
+            continue
         
-        for line in lines:
-            # Match day headers: "Monday, January 5"
-            day_match = re.match(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+(\w+)\s+(\d+)\s*$', line, re.IGNORECASE)
-            if day_match:
-                day_name = day_match.group(1).capitalize()
-                month_name = day_match.group(2)
-                day_num = int(day_match.group(3))
-                
-                month = month_map.get(month_name, 1)
-                # Assume current year (or next year if month is past current month)
-                year = current_year
-                if month < datetime.now().month:
-                    year += 1
-                
-                current_date = {
-                    'day': day_name,
-                    'month': month,
-                    'day_num': day_num,
-                    'year': year
-                }
+        # Stop if we hit "Family and" or end of schedule
+        if in_schedule_section and ('Family and' in line or 'Inflatable' in line or 'Open swim times vary' in line):
+            break
+        
+        if not in_schedule_section:
+            continue
+        
+        # Match day headers: "Monday, January 5"
+        day_match = re.match(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+(\w+)\s+(\d+)$', line, re.IGNORECASE)
+        if day_match:
+            day_name = day_match.group(1).capitalize()
+            month_name = day_match.group(2)
+            day_num = int(day_match.group(3))
+            
+            month = month_map.get(month_name, 1)
+            year = current_year
+            if month < datetime.now().month:
+                year += 1
+            
+            current_date = {
+                'day': day_name,
+                'month': month,
+                'day_num': day_num,
+                'year': year
+            }
+            continue
+        
+        # Match time slots: "7:30 - 9:30 a.m. 25m *Limited Lanes"
+        if current_date and re.search(r'\d{1,2}.*-.*\d{1,2}.*[ap]\.?m\.?', line):
+            pool_match = re.search(r'(25m|50m)', line)
+            is_limited = 'limited' in line.lower()
+            
+            if not pool_match:
                 continue
             
-            # Match time slots: "7:30 - 9:30 a.m. 25m"
-            if current_date and re.search(r'\d{1,2}.*-.*\d{1,2}.*[ap]\.?m\.?', line):
-                pool_match = re.search(r'(25m|50m)', line)
-                is_limited = 'limited' in line.lower()
-                
-                # Extract time string and parse start/end times
-                time_part = line
-                if pool_match:
-                    time_part = line[:line.index(pool_match.group(1))].strip()
-                
-                # Parse start and end times
-                time_match = re.search(r'(\d{1,2}):?(\d{2})?\s*-\s*(\d{1,2}):?(\d{2})?\s*([ap])\.?m\.?', time_part, re.IGNORECASE)
-                if not time_match:
-                    continue
-                
-                start_hour = int(time_match.group(1))
-                start_min = int(time_match.group(2) or 0)
-                end_hour = int(time_match.group(3))
-                end_min = int(time_match.group(4) or 0)
-                am_pm = time_match.group(5).lower()
-                
-                # Adjust for PM
-                if am_pm == 'p' and start_hour != 12:
-                    start_hour += 12
-                if am_pm == 'p' and end_hour != 12:
-                    end_hour += 12
-                if am_pm == 'a' and start_hour == 12:
-                    start_hour = 0
-                if am_pm == 'a' and end_hour == 12:
-                    end_hour = 0
-                
-                pool = pool_match.group(1) if pool_match else 'Unknown'
-                
-                # Create datetime objects
+            # Extract time string
+            time_part = line[:line.index(pool_match.group(1))].strip()
+            
+            # Parse start and end times
+            time_match = re.search(r'(\d{1,2}):?(\d{2})?\s*-\s*(\d{1,2}):?(\d{2})?\s*([ap])\.?m\.?', time_part, re.IGNORECASE)
+            if not time_match:
+                continue
+            
+            start_hour = int(time_match.group(1))
+            start_min = int(time_match.group(2) or 0)
+            end_hour = int(time_match.group(3))
+            end_min = int(time_match.group(4) or 0)
+            am_pm = time_match.group(5).lower()
+            
+            # Adjust for PM (handle both a.m. and a.m formats)
+            if am_pm == 'p' and start_hour != 12:
+                start_hour += 12
+            if am_pm == 'p' and end_hour != 12:
+                end_hour += 12
+            if am_pm == 'a' and start_hour == 12:
+                start_hour = 0
+            if am_pm == 'a' and end_hour == 12:
+                end_hour = 0
+            
+            pool = pool_match.group(1)
+            
+            # Create datetime objects
+            try:
                 start_dt = datetime(
                     current_date['year'],
                     current_date['month'],
@@ -129,10 +141,9 @@ def parse_schedule(html):
                 }
                 
                 sessions.append(session)
-            
-            # Stop at next section
-            if 'Family and' in line or 'Inflatable' in line:
-                break
+            except ValueError:
+                # Skip invalid dates
+                continue
     
     return sessions
 
