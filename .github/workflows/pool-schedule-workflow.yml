@@ -1,5 +1,8 @@
 name: Update Pool Schedule
 
+permissions:
+  contents: write
+
 on:
   schedule:
     # Run daily at 6 AM Calgary time (1 PM UTC, accounting for daylight saving)
