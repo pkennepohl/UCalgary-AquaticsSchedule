@@ -7,57 +7,338 @@ X-WR-CALNAME:UCalgary Pool Schedule
 X-WR-CALDESC:Weekly pool schedule from UCalgary Aquatic Centre
 X-WR-TIMEZONE:America/Edmonton
 REFRESH-INTERVAL;VALUE=DURATION:PT24H
+BEGIN:VTIMEZONE
+TZID:America/Edmonton
+BEGIN:DAYLIGHT
+DTSTART:20240310T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0600
+TZNAME:MDT
+END:DAYLIGHT
+BEGIN:STANDARD
+DTSTART:20231105T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+TZOFFSETFROM:-0600
+TZOFFSETTO:-0700
+TZNAME:MST
+END:STANDARD
+END:VTIMEZONE
 BEGIN:VEVENT
-UID:pool-20260417T073000-25m@ucalgary.ca
-DTSTAMP:20260319T200557Z
-DTSTART:20260417T073000
-DTEND:20260417T093000
+UID:pool-20260316T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260316T110000
+DTEND;TZID=America/Edmonton:20260316T160000
 SUMMARY:Pool - 25m (Limited Lanes)
-DESCRIPTION:UCalgary Aquatic Centre\nPool: 25m\nTime: 7:30 - 9:30 a.m.
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 4 p.m.
 LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
 CATEGORIES:Training,Swimming,Pool
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:pool-20260417T193000-25m@ucalgary.ca
-DTSTAMP:20260319T200557Z
-DTSTART:20260417T193000
-DTEND:20260417T220000
-SUMMARY:Pool - 25m (Limited Lanes)
-DESCRIPTION:UCalgary Aquatic Centre\nPool: 25m\nTime: 7:30 - 10 p.m.
-LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
-CATEGORIES:Training,Swimming,Pool
-TRANSP:OPAQUE
-END:VEVENT
-BEGIN:VEVENT
-UID:pool-20260427T073000-50m@ucalgary.ca
-DTSTAMP:20260319T200557Z
-DTSTART:20260427T073000
-DTEND:20260427T093000
+UID:pool-20260317T110000-50m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260317T110000
+DTEND;TZID=America/Edmonton:20260317T160000
 SUMMARY:Pool - 50m (Limited Lanes)
-DESCRIPTION:UCalgary Aquatic Centre\nPool: 50m\nTime: 7:30 - 9:30 a.m.
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 50m\nTime: 11 a.m. - 4 p.m.
 LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
 CATEGORIES:Training,Swimming,Pool
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:pool-20260427T173000-25m@ucalgary.ca
-DTSTAMP:20260319T200557Z
-DTSTART:20260427T173000
-DTEND:20260427T203000
-SUMMARY:Pool - 25m (Limited Lanes)
-DESCRIPTION:UCalgary Aquatic Centre\nPool: 25m\nTime: 5:30 - 8:30 p.m.
+UID:pool-20260318T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260318T110000
+DTEND;TZID=America/Edmonton:20260318T140000
+SUMMARY:Pool - 25m
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
 LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
 CATEGORIES:Training,Swimming,Pool
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:pool-20260427T211500-25m@ucalgary.ca
-DTSTAMP:20260319T200557Z
-DTSTART:20260427T211500
-DTEND:20260427T220000
+UID:pool-20260319T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260319T110000
+DTEND;TZID=America/Edmonton:20260319T140000
+SUMMARY:Pool - 25m
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260320T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260320T110000
+DTEND;TZID=America/Edmonton:20260320T133000
+SUMMARY:Pool - 25m
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 1:30 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260321T093000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260321T093000
+DTEND;TZID=America/Edmonton:20260321T180000
+SUMMARY:Pool - 25m
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 9:30 a.m. - 6 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260322T103000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260322T103000
+DTEND;TZID=America/Edmonton:20260322T163000
 SUMMARY:Pool - 25m (Limited Lanes)
-DESCRIPTION:UCalgary Aquatic Centre\nPool: 25m\nTime: 9:15 - 10 p.m.
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 10:30 a.m. - 4:30 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260323T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260323T110000
+DTEND;TZID=America/Edmonton:20260323T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260324T110000-50m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260324T110000
+DTEND;TZID=America/Edmonton:20260324T140000
+SUMMARY:Pool - 50m
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 50m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260325T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260325T110000
+DTEND;TZID=America/Edmonton:20260325T140000
+SUMMARY:Pool - 25m
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260326T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260326T110000
+DTEND;TZID=America/Edmonton:20260326T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260327T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260327T110000
+DTEND;TZID=America/Edmonton:20260327T133000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 1:30 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260329T103000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260329T103000
+DTEND;TZID=America/Edmonton:20260329T163000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 10:30 a.m. - 4:30 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260330T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260330T110000
+DTEND;TZID=America/Edmonton:20260330T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260331T110000-50m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260331T110000
+DTEND;TZID=America/Edmonton:20260331T140000
+SUMMARY:Pool - 50m
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 50m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260417T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260417T110000
+DTEND;TZID=America/Edmonton:20260417T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260427T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260427T110000
+DTEND;TZID=America/Edmonton:20260427T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Adult/Youth Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260321T093000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260321T093000
+DTEND;TZID=America/Edmonton:20260321T180000
+SUMMARY:Pool - 25m
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 9:30 a.m. - 6 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260322T103000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260322T103000
+DTEND;TZID=America/Edmonton:20260322T163000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 10:30 a.m. - 4:30 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260323T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260323T110000
+DTEND;TZID=America/Edmonton:20260323T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260324T110000-50m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260324T110000
+DTEND;TZID=America/Edmonton:20260324T140000
+SUMMARY:Pool - 50m
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 50m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260325T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260325T110000
+DTEND;TZID=America/Edmonton:20260325T140000
+SUMMARY:Pool - 25m
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260326T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260326T110000
+DTEND;TZID=America/Edmonton:20260326T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260327T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260327T110000
+DTEND;TZID=America/Edmonton:20260327T133000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 11 a.m. - 1:30 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260329T103000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260329T103000
+DTEND;TZID=America/Edmonton:20260329T163000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 10:30 a.m. - 4:30 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260330T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260330T110000
+DTEND;TZID=America/Edmonton:20260330T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260331T110000-50m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260331T110000
+DTEND;TZID=America/Edmonton:20260331T140000
+SUMMARY:Pool - 50m
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 50m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260417T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260417T110000
+DTEND;TZID=America/Edmonton:20260417T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:pool-20260427T110000-25m@ucalgary.ca
+DTSTAMP:20260319T203120Z
+DTSTART;TZID=America/Edmonton:20260427T110000
+DTEND;TZID=America/Edmonton:20260427T140000
+SUMMARY:Pool - 25m (Limited Lanes)
+DESCRIPTION:UCalgary Aquatic Centre - Family and Lane Swim\nPool: 25m\nTime: 11 a.m. - 2 p.m.
 LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
 CATEGORIES:Training,Swimming,Pool
 TRANSP:OPAQUE
