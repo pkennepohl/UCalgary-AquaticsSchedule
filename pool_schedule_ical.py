@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-UCalgary Pool Schedule Scraper - Export to HTML
-Fetches the schedule and creates a simple HTML file you can open on your phone.
+UCalgary Pool Schedule to iCal (.ics) Exporter
+
+Fetches the pool schedule and generates an iCalendar file for Outlook subscription.
+Designed to run via GitHub Actions daily (only commits if schedule changes).
 """
 
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
+from urllib.parse import quote
 
 def fetch_schedule():
     """Fetch the schedule from UCalgary website."""
@@ -23,190 +26,191 @@ def fetch_schedule():
         return None
 
 def parse_schedule(html):
-    """Parse the HTML and extract all sessions."""
+    """Parse the HTML and extract all sessions with proper dates."""
     soup = BeautifulSoup(html, 'html.parser')
     text = soup.get_text()
     
-    sessions_by_pool = {'25m': [], '50m': []}
+    sessions = []
     
-    # Split by "Adult/Youth Lane Swim"
-    sections = text.split('Adult/Youth Lane Swim')
+    current_year = datetime.now().year
+    month_map = {
+        'January': 1, 'February': 2, 'March': 3, 'April': 4,
+        'May': 5, 'June': 6, 'July': 7, 'August': 8,
+        'September': 9, 'October': 10, 'November': 11, 'December': 12
+    }
     
-    for section in sections[1:]:
-        lines = [l.strip() for l in section.split('\n') if l.strip()]
-        current_date = None
+    # Find the start of the schedule section
+    start_idx = text.find('Adult/Youth Lane Swim')
+    if start_idx == -1:
+        return sessions
+    
+    # Find the end (Family and Lane Swim or end of content)
+    end_idx = text.find('Family and', start_idx)
+    if end_idx == -1:
+        end_idx = len(text)
+    
+    schedule_text = text[start_idx:end_idx]
+    lines = schedule_text.split('\n')
+    
+    current_date = None
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
         
-        for line in lines:
-            # Match day headers: "Monday, January 5"
-            day_match = re.match(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+(\w+)\s+(\d+)\s*$', line, re.IGNORECASE)
-            if day_match:
-                current_date = {
-                    'day': day_match.group(1).capitalize(),
-                    'month': day_match.group(2),
-                    'day_num': int(day_match.group(3))
-                }
+        # Try to match day/date: "Monday, January 5" or "Monday, January 5"
+        day_match = re.search(r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)[,\s]+(\w+)\s+(\d+)', line, re.IGNORECASE)
+        if day_match:
+            day_name = day_match.group(1).strip().capitalize()
+            month_name = day_match.group(2).strip()
+            day_num = int(day_match.group(3))
+            
+            month = month_map.get(month_name, 1)
+            year = current_year
+            # If month is before current month, assume next year
+            if month < datetime.now().month:
+                year += 1
+            
+            current_date = {
+                'day': day_name,
+                'month': month,
+                'day_num': day_num,
+                'year': year
+            }
+            continue
+        
+        # Try to match time slot with pool: "7:30 - 9:30 a.m. 25m"
+        if current_date and re.search(r'\d{1,2}', line):
+            pool_match = re.search(r'(25m|50m)', line)
+            if not pool_match:
                 continue
             
-            # Match time slots: "7:30 - 9:30 a.m. 25m"
-            if current_date and re.search(r'\d{1,2}.*-.*\d{1,2}.*[ap]\.?m\.?', line):
-                pool_match = re.search(r'(25m|50m)', line)
-                is_limited = 'limited' in line.lower()
+            is_limited = 'limited' in line.lower()
+            
+            # Extract time portion (before pool size)
+            pool_pos = line.index(pool_match.group(1))
+            time_part = line[:pool_pos].strip()
+            
+            # Parse times: handle "7:30 - 9:30 a.m." or "11 a.m. - 2 p.m."
+            # More flexible regex
+            time_match = re.search(r'(\d{1,2}):?(\d{2})?\s*-\s*(\d{1,2}):?(\d{2})?\s*([ap])\.?m\.?', time_part, re.IGNORECASE)
+            if not time_match:
+                continue
+            
+            start_hour = int(time_match.group(1))
+            start_min = int(time_match.group(2) or 0)
+            end_hour = int(time_match.group(3))
+            end_min = int(time_match.group(4) or 0)
+            am_pm_char = time_match.group(5).lower()
+            
+            # Determine if AM or PM based on which period the line contains
+            # If line has "p.m" after the end time, both times are PM
+            # If line has "a.m" after the end time, both times are AM
+            # Look at what comes after end_hour
+            remaining = time_part[time_match.end():]
+            
+            # Default: use the am_pm_char found
+            is_pm = (am_pm_char == 'p')
+            
+            # Check if there's another am/pm indicator
+            second_ampm = re.search(r'([ap])\.?m\.?', remaining, re.IGNORECASE)
+            if second_ampm:
+                is_pm = (second_ampm.group(1).lower() == 'p')
+            
+            # Adjust hours
+            if is_pm and start_hour != 12:
+                start_hour += 12
+            if is_pm and end_hour != 12:
+                end_hour += 12
+            if not is_pm and start_hour == 12:
+                start_hour = 0
+            if not is_pm and end_hour == 12:
+                end_hour = 0
+            
+            pool = pool_match.group(1)
+            
+            try:
+                start_dt = datetime(
+                    current_date['year'],
+                    current_date['month'],
+                    current_date['day_num'],
+                    start_hour,
+                    start_min
+                )
                 
-                time_str = line
-                if pool_match:
-                    time_str = line[:line.index(pool_match.group(1))].strip()
-                
-                pool = pool_match.group(1) if pool_match else 'Unknown'
+                end_dt = datetime(
+                    current_date['year'],
+                    current_date['month'],
+                    current_date['day_num'],
+                    end_hour,
+                    end_min
+                )
                 
                 session = {
                     'day': current_date['day'],
-                    'date': f"{current_date['month']} {current_date['day_num']}",
-                    'time': time_str,
+                    'date_str': f"{current_date['month']:02d}/{current_date['day_num']:02d}/{current_date['year']}",
+                    'start_dt': start_dt,
+                    'end_dt': end_dt,
+                    'time_str': time_part,
+                    'pool': pool,
                     'limited': is_limited
                 }
                 
-                if pool in sessions_by_pool:
-                    sessions_by_pool[pool].append(session)
-            
-            # Stop at next section
-            if 'Family and' in line or 'Inflatable' in line:
-                break
-    
-    return sessions_by_pool
-
-def create_html(sessions_by_pool):
-    """Create a simple HTML file."""
-    html = """<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UCalgary Pool Schedule</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1e293b 0%, #1e3a8a 50%, #0f172a 100%);
-            color: #e0e7ff;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { font-size: 2em; margin-bottom: 10px; color: #93c5fd; }
-        .subtitle { color: #bfdbfe; margin-bottom: 30px; font-size: 0.95em; }
-        .timestamp { color: #94a3b8; font-size: 0.85em; margin-bottom: 20px; }
-        
-        .pool-section { margin-bottom: 40px; }
-        .pool-header {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: white;
-            padding: 12px 16px;
-            background: linear-gradient(90deg, #3b82f6, #2563eb);
-            border-radius: 6px 6px 0 0;
-            margin-bottom: 0;
-        }
-        
-        .sessions {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            overflow: hidden;
-        }
-        
-        .session {
-            padding: 16px;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .session:last-child { border-bottom: none; }
-        
-        .session.limited { opacity: 0.6; }
-        .session.limited-badge { color: #fca5a5; font-size: 0.8em; }
-        
-        .day-info { font-weight: 500; color: #e0e7ff; }
-        .time-info { color: #cbd5e1; font-size: 0.9em; }
-        .day { color: #93c5fd; font-weight: 600; }
-        .date { color: #94a3b8; font-size: 0.85em; }
-        
-        .notes {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 6px;
-            padding: 20px;
-            margin-top: 40px;
-            font-size: 0.9em;
-            line-height: 1.6;
-        }
-        
-        .notes h3 { color: #93c5fd; margin-bottom: 12px; }
-        .notes li { margin-left: 20px; margin-bottom: 8px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🏊 Pool Schedule</h1>
-        <p class="subtitle">UCalgary Aquatic Centre – This Week's Sessions</p>
-        <p class="timestamp">Last updated: """ + datetime.now().strftime("%A, %B %d, %Y at %I:%M %p") + """</p>
-"""
-    
-    day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    
-    for pool, sessions in [('25m', sessions_by_pool['25m']), ('50m', sessions_by_pool['50m'])]:
-        if not sessions:
-            continue
-        
-        # Group by day
-        by_day = {}
-        for session in sessions:
-            day = session['day']
-            if day not in by_day:
-                by_day[day] = []
-            by_day[day].append(session)
-        
-        html += f"""        <div class="pool-section">
-            <div class="pool-header">{pool} Pool</div>
-            <div class="sessions">
-"""
-        
-        for day in day_order:
-            if day not in by_day:
+                sessions.append(session)
+            except (ValueError, TypeError):
+                # Skip invalid dates
                 continue
-            
-            for session in by_day[day]:
-                limited_class = 'limited' if session['limited'] else ''
-                limited_note = ' <span class="limited-badge">(Limited Lanes)</span>' if session['limited'] else ''
-                
-                html += f"""                <div class="session {limited_class}">
-                    <div>
-                        <div class="day-info"><span class="day">{session['day']}</span> · <span class="date">{session['date']}</span></div>
-                        <div class="time-info">{session['time']}{limited_note}</div>
-                    </div>
-                </div>
+    
+    return sessions
+
+def create_ical(sessions):
+    """Create an iCalendar (.ics) file content."""
+    
+    # iCal header
+    ical = """BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//UCalgary Pool Schedule//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:UCalgary Pool Schedule
+X-WR-CALDESC:Weekly pool schedule from UCalgary Aquatic Centre
+X-WR-TIMEZONE:America/Edmonton
+REFRESH-INTERVAL;VALUE=DURATION:PT24H
 """
+    
+    # Create an event for each session
+    for session in sessions:
+        # Generate unique ID (based on date, time, pool)
+        event_id = f"pool-{session['start_dt'].isoformat().replace(':', '').replace('-', '')}-{session['pool']}@ucalgary.ca"
         
-        html += """            </div>
-        </div>
+        # Format timestamps for iCal (UTC is not needed, use local time)
+        start_time = session['start_dt'].strftime('%Y%m%dT%H%M%S')
+        end_time = session['end_dt'].strftime('%Y%m%dT%H%M%S')
+        created = datetime.now().strftime('%Y%m%dT%H%M%SZ')
+        
+        # Event title
+        limited_note = ' (Limited Lanes)' if session['limited'] else ''
+        title = f"Pool - {session['pool']}{limited_note}"
+        
+        # Build event
+        ical += f"""BEGIN:VEVENT
+UID:{event_id}
+DTSTAMP:{created}
+DTSTART:{start_time}
+DTEND:{end_time}
+SUMMARY:{title}
+DESCRIPTION:UCalgary Aquatic Centre\\nPool: {session['pool']}\\nTime: {session['time_str']}
+LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
+CATEGORIES:Training,Swimming,Pool
+TRANSP:OPAQUE
+END:VEVENT
 """
     
-    html += """        <div class="notes">
-            <h3>📋 Notes</h3>
-            <ul>
-                <li>Sessions marked <span style="color: #fca5a5;">(Limited Lanes)</span> have reduced availability</li>
-                <li>Schedule updates weekly – check back each Monday for current times</li>
-                <li>Water restrictions in effect: limit showers to 3 minutes, steam rooms unavailable</li>
-            </ul>
-        </div>
-    </div>
-</body>
-</html>
-"""
+    # iCal footer
+    ical += "END:VCALENDAR\n"
     
-    return html
+    return ical
 
 def main():
     print("Fetching UCalgary pool schedule...")
@@ -214,25 +218,31 @@ def main():
     
     if not html:
         print("Failed to fetch schedule")
-        return
+        return False
     
     print("Parsing schedule...")
     sessions = parse_schedule(html)
     
-    # Count sessions
-    total = sum(len(s) for s in sessions.values())
-    print(f"Found {total} sessions ({len(sessions['25m'])} at 25m, {len(sessions['50m'])} at 50m)")
+    if not sessions:
+        print("No sessions found in schedule")
+        return False
     
-    # Create HTML
-    output_html = create_html(sessions)
+    # Count sessions
+    sessions_25m = [s for s in sessions if s['pool'] == '25m']
+    sessions_50m = [s for s in sessions if s['pool'] == '50m']
+    print(f"Found {len(sessions)} sessions ({len(sessions_25m)} at 25m, {len(sessions_50m)} at 50m)")
+    
+    # Create iCal
+    ical_content = create_ical(sessions)
     
     # Save to file
-    filename = 'ucalgary-pool-schedule.html'
+    filename = 'pool-schedule.ics'
     with open(filename, 'w') as f:
-        f.write(output_html)
+        f.write(ical_content)
     
-    print(f"\n✓ Schedule saved to: {filename}")
-    print(f"\nOpen this file in your browser or transfer to your phone to view.")
+    print(f"✓ iCal file saved to: {filename}")
+    return True
 
 if __name__ == '__main__':
-    main()
+    success = main()
+    exit(0 if success else 1)
