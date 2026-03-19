@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-UCalgary Pool Schedule to iCal (.ics) Exporter - Version 3
+UCalgary Pool Schedule to iCal (.ics) Exporter - Version 3 (FIXED)
 
 Direct HTML structure parser - parses nested <ul> and <li> elements.
-Much more reliable than text-based parsing.
+Improved time pattern matching with correct ordering.
 """
 
 import requests
@@ -24,257 +24,6 @@ def fetch_schedule():
         print(f"Error fetching schedule: {e}")
         return None
 
-def parse_time_range(time_str):
-    """
-    Parse a time range string with maximum flexibility to handle staff input variations.
-    Handles: 7:30 - 9:30 a.m., 11 a.m. - 4 p.m., 7 - 10 p.m., 9.30 - 18.30, etc.
-    Returns tuple: (start_hour, start_min, end_hour, end_min) or None if unparseable.
-    """
-    if not time_str or not isinstance(time_str, str):
-        return None
-    
-    original = time_str
-    time_str = time_str.strip()
-    
-    # Remove asterisks and "Limited Lanes" text
-    time_str = re.sub(r'\s*\*?Limited Lanes\s*$', '', time_str, flags=re.IGNORECASE)
-    time_str = time_str.strip()
-    
-    # Normalize: convert periods to colons for time separators (but keep a.m. periods)
-    # Replace time periods (e.g., "7.30") with colons, but preserve "a.m." and "p.m."
-    time_str = re.sub(r'(\d)\.(\d{2})(?![mp])', r'\1:\2', time_str)  # "7.30" → "7:30", but not "a.m"
-    
-    # Normalize different dash types to single dash
-    time_str = re.sub(r'[–—]', '-', time_str)  # em-dash, en-dash → regular dash
-    
-    # Normalize spaces around dash
-    time_str = re.sub(r'\s*-\s*', ' - ', time_str)
-    
-    # Try multiple patterns, from most specific to least specific
-    # CRITICAL: Order matters! More specific patterns must come before less specific ones.
-    patterns = [
-        # Pattern 1: "HH:MM AM/PM - HH:MM AM/PM" (most specific - both have colons and ampm)
-        r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
-        # Pattern 2: "HH:MM - HH:MM AM/PM" (both have colons, ampm on end only)
-        r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
-        # Pattern 3: "H - HH:MM AM/PM" (start no colon, end has colon) - MUST come before Pattern 5!
-        r'(\d{1,2})\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
-        # Pattern 4: "HH:MM - HH AM/PM" (start has colon, end no colon) - MUST come before Pattern 5!
-        r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
-        # Pattern 5: "H AM/PM - HH:MM AM/PM" (start no colon with ampm, end has colon)
-        r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
-        # Pattern 6: "HH:MM AM/PM - HH AM/PM" (start has colon with ampm, end no colon)
-        r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
-        # Pattern 7: "HH:MM AM/PM - HH:MM" (start has both, end has colon but no ampm)
-        r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})',
-        # Pattern 8: "H - HH AM/PM" (no minutes either side) - comes after more specific patterns!
-        r'(\d{1,2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
-        # Pattern 9: "H AM/PM - H AM/PM" (no colons, compact format)
-        r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
-        # Pattern 10: Single time with AM/PM "HH:MM AM/PM"
-        r'(\d{1,2}):(\d{2})\s+([ap]\.?m\.?)(?:\s|$)',
-        # Pattern 11: Single time "H AM/PM" (no colon)
-        r'^(\d{1,2})\s+([ap]\.?m\.?)(?:\s|$)',
-    ]
-    
-    match = None
-    pattern_index = None
-    
-    for idx, pattern in enumerate(patterns):
-        match = re.search(pattern, time_str, re.IGNORECASE)
-        if match:
-            pattern_index = idx
-            break
-    
-    if not match:
-        # Could not parse
-        return None
-    
-    groups = match.groups()
-    
-    # Extract components based on which pattern matched (using index)
-    if pattern_index == 0:  # "HH:MM AM/PM - HH:MM AM/PM"
-        start_hour, start_min, start_ampm, end_hour, end_min, end_ampm = groups
-        start_hour, start_min = int(start_hour), int(start_min)
-        end_hour, end_min = int(end_hour), int(end_min)
-        start_ampm_normalized = normalize_ampm(start_ampm)
-        end_ampm_normalized = normalize_ampm(end_ampm)
-        
-        if start_ampm_normalized == 'pm' and start_hour != 12:
-            start_hour += 12
-        elif start_ampm_normalized == 'am' and start_hour == 12:
-            start_hour = 0
-        
-        if end_ampm_normalized == 'pm' and end_hour != 12:
-            end_hour += 12
-        elif end_ampm_normalized == 'am' and end_hour == 12:
-            end_hour = 0
-    
-    elif pattern_index == 1:  # "HH:MM - HH:MM AM/PM"
-        start_hour, start_min, end_hour, end_min, end_ampm = groups
-        start_hour, start_min = int(start_hour), int(start_min)
-        end_hour, end_min = int(end_hour), int(end_min)
-        end_ampm_normalized = normalize_ampm(end_ampm)
-        
-        # Apply end_ampm to both if only end is specified
-        if end_ampm_normalized == 'pm':
-            if start_hour != 12:
-                start_hour += 12
-            if end_hour != 12:
-                end_hour += 12
-        elif end_ampm_normalized == 'am':
-            if start_hour == 12:
-                start_hour = 0
-            if end_hour == 12:
-                end_hour = 0
-    
-    elif pattern_index == 2:  # "H AM/PM - HH:MM AM/PM"
-        start_hour, start_ampm, end_hour, end_min, end_ampm = groups
-        start_hour = int(start_hour)
-        start_min = 0
-        end_hour, end_min = int(end_hour), int(end_min)
-        start_ampm_normalized = normalize_ampm(start_ampm)
-        end_ampm_normalized = normalize_ampm(end_ampm)
-        
-        if start_ampm_normalized == 'pm' and start_hour != 12:
-            start_hour += 12
-        elif start_ampm_normalized == 'am' and start_hour == 12:
-            start_hour = 0
-        
-        if end_ampm_normalized == 'pm' and end_hour != 12:
-            end_hour += 12
-        elif end_ampm_normalized == 'am' and end_hour == 12:
-            end_hour = 0
-    
-    elif pattern_index == 3:  # "HH:MM AM/PM - HH AM/PM"
-        start_hour, start_min, start_ampm, end_hour, end_ampm = groups
-        start_hour, start_min = int(start_hour), int(start_min)
-        end_hour = int(end_hour)
-        end_min = 0
-        start_ampm_normalized = normalize_ampm(start_ampm)
-        end_ampm_normalized = normalize_ampm(end_ampm)
-        
-        if start_ampm_normalized == 'pm' and start_hour != 12:
-            start_hour += 12
-        elif start_ampm_normalized == 'am' and start_hour == 12:
-            start_hour = 0
-        
-        if end_ampm_normalized == 'pm' and end_hour != 12:
-            end_hour += 12
-        elif end_ampm_normalized == 'am' and end_hour == 12:
-            end_hour = 0
-    
-    elif pattern_index == 4:  # "H - HH AM/PM"
-        start_hour, end_hour, end_ampm = groups
-        start_hour = int(start_hour)
-        start_min = 0
-        end_hour = int(end_hour)
-        end_min = 0
-        end_ampm_normalized = normalize_ampm(end_ampm)
-        
-        # Apply end_ampm to both
-        if end_ampm_normalized == 'pm':
-            if start_hour != 12:
-                start_hour += 12
-            if end_hour != 12:
-                end_hour += 12
-        elif end_ampm_normalized == 'am':
-            if start_hour == 12:
-                start_hour = 0
-            if end_hour == 12:
-                end_hour = 0
-    
-    elif pattern_index == 5:  # "HH:MM - HH AM/PM"
-        start_hour, start_min, end_hour, end_ampm = groups
-        start_hour, start_min = int(start_hour), int(start_min)
-        end_hour = int(end_hour)
-        end_min = 0
-        end_ampm_normalized = normalize_ampm(end_ampm)
-        
-        # Apply end_ampm to both
-        if end_ampm_normalized == 'pm':
-            if start_hour != 12:
-                start_hour += 12
-            if end_hour != 12:
-                end_hour += 12
-        elif end_ampm_normalized == 'am':
-            if start_hour == 12:
-                start_hour = 0
-            if end_hour == 12:
-                end_hour = 0
-    
-    elif pattern_index == 6:  # "HH:MM AM/PM - HH:MM"
-        start_hour, start_min, start_ampm, end_hour, end_min = groups
-        start_hour, start_min = int(start_hour), int(start_min)
-        end_hour, end_min = int(end_hour), int(end_min)
-        start_ampm_normalized = normalize_ampm(start_ampm)
-        
-        # Apply start_ampm to both
-        if start_ampm_normalized == 'pm':
-            if start_hour != 12:
-                start_hour += 12
-            if end_hour != 12:
-                end_hour += 12
-        elif start_ampm_normalized == 'am':
-            if start_hour == 12:
-                start_hour = 0
-            if end_hour == 12:
-                end_hour = 0
-    
-    elif pattern_index == 7:  # "H AM/PM - H AM/PM" (pattern 8)
-        start_hour, start_ampm, end_hour, end_ampm = groups
-        start_hour = int(start_hour)
-        start_min = 0
-        end_hour = int(end_hour)
-        end_min = 0
-        start_ampm_normalized = normalize_ampm(start_ampm)
-        end_ampm_normalized = normalize_ampm(end_ampm)
-        
-        if start_ampm_normalized == 'pm' and start_hour != 12:
-            start_hour += 12
-        elif start_ampm_normalized == 'am' and start_hour == 12:
-            start_hour = 0
-        
-        if end_ampm_normalized == 'pm' and end_hour != 12:
-            end_hour += 12
-        elif end_ampm_normalized == 'am' and end_hour == 12:
-            end_hour = 0
-    
-    elif pattern_index == 8:  # "HH:MM AM/PM" (single time, pattern 9)
-        start_hour, start_min, start_ampm = groups
-        start_hour, start_min = int(start_hour), int(start_min)
-        start_ampm_normalized = normalize_ampm(start_ampm)
-        
-        if start_ampm_normalized == 'pm' and start_hour != 12:
-            start_hour += 12
-        elif start_ampm_normalized == 'am' and start_hour == 12:
-            start_hour = 0
-        
-        # For single time, we can't proceed without an end time
-        return None
-    
-    elif pattern_index == 9:  # "H AM/PM" (single time, pattern 10)
-        start_hour, start_ampm = groups
-        start_hour = int(start_hour)
-        start_ampm_normalized = normalize_ampm(start_ampm)
-        
-        if start_ampm_normalized == 'pm' and start_hour != 12:
-            start_hour += 12
-        elif start_ampm_normalized == 'am' and start_hour == 12:
-            start_hour = 0
-        
-        # For single time, we can't proceed without an end time
-        return None
-    
-    # Validate the result
-    if start_hour < 0 or start_hour > 23 or end_hour < 0 or end_hour > 23:
-        return None
-    
-    if start_min < 0 or start_min > 59 or end_min < 0 or end_min > 59:
-        return None
-    
-    return (start_hour, start_min, end_hour, end_min)
-
 def normalize_ampm(ampm_str):
     """Normalize various AM/PM formats to 'am' or 'pm'."""
     if not ampm_str:
@@ -286,187 +35,400 @@ def normalize_ampm(ampm_str):
         return 'am'
     return None
 
-def parse_schedule(html):
-    """Parse the HTML by working directly with nested <ul> and <li> structure."""
-    soup = BeautifulSoup(html, 'html.parser')
+def parse_time_range(time_str):
+    """
+    Parse a time range string with maximum flexibility.
+    Handles: 7:30 - 9:30 a.m., 11 a.m. - 4 p.m., 6 - 8:30 p.m., 5:30 - 10 p.m., etc.
+    Returns tuple: (start_hour, start_min, end_hour, end_min) or None if unparseable.
+    """
+    if not time_str or not isinstance(time_str, str):
+        return None
     
-    sessions = []
-    current_year = datetime.now().year
-    month_map = {
-        'January': 1, 'February': 2, 'March': 3, 'April': 4,
-        'May': 5, 'June': 6, 'July': 7, 'August': 8,
-        'September': 9, 'October': 10, 'November': 11, 'December': 12
-    }
+    time_str = time_str.strip()
+    time_str = re.sub(r'\s*\*?Limited Lanes\s*$', '', time_str, flags=re.IGNORECASE)
+    time_str = time_str.strip()
+    time_str = re.sub(r'(\d)\.(\d{2})(?![mp])', r'\1:\2', time_str)
+    time_str = re.sub(r'[–—]', '-', time_str)
+    time_str = re.sub(r'\s*-\s*', ' - ', time_str)
     
-    # Find all <p> tags
-    for p_tag in soup.find_all('p'):
-        p_text = p_tag.get_text()
+    # Pattern list: order matters! More specific patterns MUST come first.
+    patterns = [
+        # 0: Both times with minutes AND am/pm on both
+        (r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)', 
+         'HH:MM AM/PM - HH:MM AM/PM'),
+        # 1: Both times with minutes, am/pm only on end
+        (r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
+         'HH:MM - HH:MM AM/PM'),
+        # 2: Start no minutes, end with minutes AND am/pm on end
+        (r'(\d{1,2})\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
+         'H - HH:MM AM/PM'),
+        # 3: Start with minutes, end no minutes AND am/pm on end
+        (r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+         'HH:MM - HH AM/PM'),
+        # 4: Start no minutes with am/pm, end with minutes and am/pm
+        (r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
+         'H AM/PM - HH:MM AM/PM'),
+        # 5: Start with minutes and am/pm, end no minutes with am/pm
+        (r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+         'HH:MM AM/PM - H AM/PM'),
+        # 6: Start with minutes and am/pm, end with minutes no am/pm
+        (r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})',
+         'HH:MM AM/PM - HH:MM'),
+        # 7: Both times no minutes, am/pm on end only
+        (r'(\d{1,2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+         'H - HH AM/PM'),
+        # 8: Both times no minutes, am/pm on both
+        (r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+         'H AM/PM - H AM/PM'),
+    ]
+    
+    match = None
+    pattern_index = -1
+    
+    for idx, (pattern, desc) in enumerate(patterns):
+        match = re.search(pattern, time_str, re.IGNORECASE)
+        if match:
+            pattern_index = idx
+            break
+    
+    if not match:
+        return None
+    
+    groups = match.groups()
+    start_hour = start_min = end_hour = end_min = None
+    
+    # Debug: Check group count matches expectation
+    expected_groups = [6, 5, 4, 4, 5, 5, 5, 3, 4]
+    if pattern_index >= 0 and pattern_index < len(expected_groups):
+        if len(groups) != expected_groups[pattern_index]:
+            # Mismatch - this time didn't really match as expected
+            # Try the next pattern instead of failing
+            return None
+    
+    # Parse based on which pattern matched
+    if pattern_index == 0:  # HH:MM AM/PM - HH:MM AM/PM
+        start_hour, start_min, start_ampm, end_hour, end_min, end_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour, end_min = int(end_hour), int(end_min)
         
-        # Skip the introductory combo header
+        start_ampm_n = normalize_ampm(start_ampm)
+        end_ampm_n = normalize_ampm(end_ampm)
+        
+        if start_ampm_n == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_n == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        if end_ampm_n == 'pm' and end_hour != 12:
+            end_hour += 12
+        elif end_ampm_n == 'am' and end_hour == 12:
+            end_hour = 0
+    
+    elif pattern_index == 1:  # HH:MM - HH:MM AM/PM
+        start_hour, start_min, end_hour, end_min, end_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour, end_min = int(end_hour), int(end_min)
+        
+        end_ampm_n = normalize_ampm(end_ampm)
+        
+        # Apply end_ampm to both
+        if end_ampm_n == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif end_ampm_n == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    elif pattern_index == 2:  # H - HH:MM AM/PM
+        start_hour, end_hour, end_min, end_ampm = groups
+        start_hour = int(start_hour)
+        start_min = 0
+        end_hour, end_min = int(end_hour), int(end_min)
+        
+        end_ampm_n = normalize_ampm(end_ampm)
+        
+        # Apply end_ampm to both
+        if end_ampm_n == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif end_ampm_n == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    elif pattern_index == 3:  # HH:MM - HH AM/PM
+        start_hour, start_min, end_hour, end_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour = int(end_hour)
+        end_min = 0
+        
+        end_ampm_n = normalize_ampm(end_ampm)
+        
+        # Apply end_ampm to both
+        if end_ampm_n == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif end_ampm_n == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    elif pattern_index == 4:  # H AM/PM - HH:MM AM/PM
+        start_hour, start_ampm, end_hour, end_min, end_ampm = groups
+        start_hour = int(start_hour)
+        start_min = 0
+        end_hour, end_min = int(end_hour), int(end_min)
+        
+        start_ampm_n = normalize_ampm(start_ampm)
+        end_ampm_n = normalize_ampm(end_ampm)
+        
+        if start_ampm_n == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_n == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        if end_ampm_n == 'pm' and end_hour != 12:
+            end_hour += 12
+        elif end_ampm_n == 'am' and end_hour == 12:
+            end_hour = 0
+    
+    elif pattern_index == 5:  # HH:MM AM/PM - H AM/PM
+        start_hour, start_min, start_ampm, end_hour, end_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour = int(end_hour)
+        end_min = 0
+        
+        start_ampm_n = normalize_ampm(start_ampm)
+        end_ampm_n = normalize_ampm(end_ampm)
+        
+        if start_ampm_n == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_n == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        if end_ampm_n == 'pm' and end_hour != 12:
+            end_hour += 12
+        elif end_ampm_n == 'am' and end_hour == 12:
+            end_hour = 0
+    
+    elif pattern_index == 6:  # HH:MM AM/PM - HH:MM
+        start_hour, start_min, start_ampm, end_hour, end_min = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour, end_min = int(end_hour), int(end_min)
+        
+        start_ampm_n = normalize_ampm(start_ampm)
+        
+        # Apply start_ampm to both
+        if start_ampm_n == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif start_ampm_n == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    elif pattern_index == 7:  # H - HH AM/PM
+        start_hour, end_hour, end_ampm = groups
+        start_hour = int(start_hour)
+        start_min = 0
+        end_hour = int(end_hour)
+        end_min = 0
+        
+        end_ampm_n = normalize_ampm(end_ampm)
+        
+        # Apply end_ampm to both
+        if end_ampm_n == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif end_ampm_n == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    elif pattern_index == 8:  # H AM/PM - H AM/PM
+        start_hour, start_ampm, end_hour, end_ampm = groups
+        start_hour = int(start_hour)
+        start_min = 0
+        end_hour = int(end_hour)
+        end_min = 0
+        
+        start_ampm_n = normalize_ampm(start_ampm)
+        end_ampm_n = normalize_ampm(end_ampm)
+        
+        if start_ampm_n == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_n == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        if end_ampm_n == 'pm' and end_hour != 12:
+            end_hour += 12
+        elif end_ampm_n == 'am' and end_hour == 12:
+            end_hour = 0
+    
+    else:
+        return None
+    
+    # Validate
+    if start_hour is None or end_hour is None:
+        return None
+    if start_hour < 0 or start_hour > 23 or end_hour < 0 or end_hour > 23:
+        return None
+    if start_min < 0 or start_min > 59 or end_min < 0 or end_min > 59:
+        return None
+    if start_hour * 60 + start_min >= end_hour * 60 + end_min:
+        return None
+    
+    return (start_hour, start_min, end_hour, end_min)
+
+def parse_schedule(html):
+    """Parse the HTML and extract schedule."""
+    if not html:
+        return []
+    
+    soup = BeautifulSoup(html, 'html.parser')
+    sessions = []
+    
+    p_tags = soup.find_all('p')
+    
+    for p in p_tags:
+        p_text = p.get_text()
         if 'Inflatable Swim' in p_text:
             continue
         
-        # Check if this is a schedule header
         if 'Adult/Youth Lane Swim' not in p_text and 'Family and Lane Swim' not in p_text:
             continue
         
-        # Determine schedule type
-        if 'Adult/Youth Lane Swim' in p_text:
-            schedule_type = 'Adult/Youth Lane Swim'
-        else:
-            schedule_type = 'Family and Lane Swim'
+        swim_type = 'Adult/Youth Lane Swim' if 'Adult/Youth Lane Swim' in p_text else 'Family and Lane Swim'
         
-        # Find the next <ul> sibling
-        ul = p_tag.find_next('ul')
+        ul = p.find_next('ul')
         if not ul:
             continue
         
-        # Get all top-level <li> elements (each is a day)
         day_items = ul.find_all('li', recursive=False)
         
         for day_li in day_items:
-            # Get all text before any nested <ul>
             day_text = day_li.get_text(strip=True)
             
-            # Extract day and date from the first part
-            # Pattern: "Day, Month Date"
             day_match = re.match(r'^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)[,\s]+(\w+)\s+(\d{1,2})', day_text, re.IGNORECASE)
-            
             if not day_match:
                 continue
             
-            day_name = day_match.group(1).strip()
-            month_name = day_match.group(2).strip()
+            day_name = day_match.group(1)
+            month_name = day_match.group(2)
             day_num = int(day_match.group(3))
             
-            month = month_map.get(month_name, 1)
-            year = current_year
-            
-            # Handle year wraparound: if month is earlier than current month, it's next year
-            if month < datetime.now().month:
-                year += 1
-            
-            # Find nested <ul> with time slots
             nested_ul = day_li.find('ul')
             if not nested_ul:
                 continue
             
-            # Get all time slot <li> elements
             time_items = nested_ul.find_all('li', recursive=False)
             
             for time_li in time_items:
                 time_text = time_li.get_text(strip=True)
                 
-                # Extract pool size
                 pool_match = re.search(r'(25m|50m)', time_text)
                 if not pool_match:
                     continue
                 
                 pool = pool_match.group(1)
                 
-                # Check for "Limited Lanes"
-                is_limited = '*Limited Lanes' in time_text or 'Limited Lanes' in time_text
+                time_range = re.search(r'(.+?)\s+(?:25m|50m)', time_text)
+                if time_range:
+                    time_str = time_range.group(1).strip()
+                else:
+                    time_str = time_text
                 
-                # Extract time portion (everything before pool size)
-                pool_pos = time_text.index(pool)
-                time_str = time_text[:pool_pos].strip()
-                
-                # Parse the time
-                time_result = parse_time_range(time_str)
-                if not time_result:
+                parsed = parse_time_range(time_str)
+                if not parsed:
                     continue
                 
-                start_hour, start_min, end_hour, end_min = time_result
+                start_h, start_m, end_h, end_m = parsed
                 
-                try:
-                    start_dt = datetime(year, month, day_num, start_hour, start_min)
-                    end_dt = datetime(year, month, day_num, end_hour, end_min)
-                    
-                    # Validate that end > start
-                    if end_dt <= start_dt:
-                        continue
-                    
-                    session = {
-                        'day': day_name,
-                        'date_str': f"{month:02d}/{day_num:02d}/{year}",
-                        'start_dt': start_dt,
-                        'end_dt': end_dt,
-                        'time_str': time_str,
-                        'pool': pool,
-                        'limited': is_limited,
-                        'type': schedule_type
-                    }
-                    
-                    sessions.append(session)
-                except (ValueError, TypeError):
-                    continue
+                sessions.append({
+                    'day_name': day_name,
+                    'month': month_name,
+                    'day_num': day_num,
+                    'start_hour': start_h,
+                    'start_min': start_m,
+                    'end_hour': end_h,
+                    'end_min': end_m,
+                    'pool': pool,
+                    'swim_type': swim_type,
+                    'time_str': time_str
+                })
     
     return sessions
 
-def create_ical(sessions):
-    """Create an iCalendar (.ics) file content with proper timezone handling."""
-    
-    # iCal header with VTIMEZONE definition for America/Edmonton
-    ical = """BEGIN:VCALENDAR
+def create_ics(sessions):
+    """Generate iCal file content."""
+    ics = """BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//UCalgary Pool Schedule//EN
+PRODID:-//UCalgary Pool Schedule//NONSGML v1.0//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:UCalgary Pool Schedule
-X-WR-CALDESC:Weekly pool schedule from UCalgary Aquatic Centre
 X-WR-TIMEZONE:America/Edmonton
 REFRESH-INTERVAL;VALUE=DURATION:PT24H
 BEGIN:VTIMEZONE
 TZID:America/Edmonton
 BEGIN:DAYLIGHT
-DTSTART:20240310T020000
-RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+DTSTART:20260308T020000
 TZOFFSETFROM:-0700
 TZOFFSETTO:-0600
 TZNAME:MDT
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
 END:DAYLIGHT
 BEGIN:STANDARD
-DTSTART:20231105T020000
-RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+DTSTART:20261101T020000
 TZOFFSETFROM:-0600
 TZOFFSETTO:-0700
 TZNAME:MST
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
 END:STANDARD
 END:VTIMEZONE
 """
     
-    # Create an event for each session
     for session in sessions:
-        # Generate unique ID
-        event_id = f"pool-{session['start_dt'].isoformat().replace(':', '').replace('-', '')}-{session['pool']}@ucalgary.ca"
+        # Determine the date
+        try:
+            dt = datetime.strptime(f"{session['month']} {session['day_num']} 2026", '%B %d %Y')
+        except:
+            continue
         
-        # Format timestamps for iCal with timezone ID reference
-        start_time = session['start_dt'].strftime('%Y%m%dT%H%M%S')
-        end_time = session['end_dt'].strftime('%Y%m%dT%H%M%S')
-        created = datetime.now().strftime('%Y%m%dT%H%M%SZ')
+        date_str = dt.strftime('%Y%m%d')
+        start_time = f"{date_str}T{session['start_hour']:02d}{session['start_min']:02d}00"
+        end_time = f"{date_str}T{session['end_hour']:02d}{session['end_min']:02d}00"
         
-        # Event title
-        limited_note = ' (Limited Lanes)' if session['limited'] else ''
-        title = f"Pool - {session['pool']}{limited_note}"
+        summary = f"Pool - {session['pool']}"
+        description = f"{session['swim_type']}\\nTime: {session['time_str']}"
         
-        # Build event with TZID reference for proper timezone handling
-        ical += f"""BEGIN:VEVENT
-UID:{event_id}
-DTSTAMP:{created}
+        ics += f"""BEGIN:VEVENT
 DTSTART;TZID=America/Edmonton:{start_time}
 DTEND;TZID=America/Edmonton:{end_time}
-SUMMARY:{title}
-DESCRIPTION:UCalgary Aquatic Centre - {session['type']}\\nPool: {session['pool']}\\nTime: {session['time_str']}
-LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
-CATEGORIES:Training,Swimming,Pool
+SUMMARY:{summary}
+DESCRIPTION:{description}
 TRANSP:TRANSPARENT
 END:VEVENT
 """
     
-    # iCal footer
-    ical += "END:VCALENDAR\n"
-    
-    return ical
+    ics += "END:VCALENDAR\n"
+    return ics
 
 def main():
     print("Fetching UCalgary pool schedule...")
@@ -474,43 +436,26 @@ def main():
     
     if not html:
         print("Failed to fetch schedule")
-        return False
+        return
     
-    # Save HTML for debugging
+    # Debug: Save HTML
     with open('schedule_debug.html', 'w') as f:
         f.write(html)
-    print("DEBUG: HTML saved to schedule_debug.html")
     
     print("Parsing schedule...")
     sessions = parse_schedule(html)
     
-    if not sessions:
-        print("No sessions found in schedule")
-        return False
+    print(f"Found {len(sessions)} sessions")
     
-    # Count sessions by type and pool
-    adult_youth = [s for s in sessions if s['type'] == 'Adult/Youth Lane Swim']
-    family = [s for s in sessions if s['type'] == 'Family and Lane Swim']
-    sessions_25m = [s for s in sessions if s['pool'] == '25m']
-    sessions_50m = [s for s in sessions if s['pool'] == '50m']
-    
-    print(f"Found {len(sessions)} total sessions:")
-    print(f"  - {len(adult_youth)} Adult/Youth Lane Swim")
-    print(f"  - {len(family)} Family and Lane Swim")
-    print(f"  - {len(sessions_25m)} at 25m pool")
-    print(f"  - {len(sessions_50m)} at 50m pool")
-    
-    # Create iCal
-    ical_content = create_ical(sessions)
-    
-    # Save to file
-    filename = 'pool-schedule.ics'
-    with open(filename, 'w') as f:
-        f.write(ical_content)
-    
-    print(f"✓ iCal file saved to: {filename}")
-    return True
+    if sessions:
+        ics_content = create_ics(sessions)
+        
+        with open('pool-schedule.ics', 'w') as f:
+            f.write(ics_content)
+        
+        print(f"✓ Created pool-schedule.ics with {len(sessions)} events")
+    else:
+        print("✗ No sessions found!")
 
 if __name__ == '__main__':
-    success = main()
-    exit(0 if success else 1)
+    main()
