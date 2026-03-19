@@ -311,7 +311,7 @@ SUMMARY:{title}
 DESCRIPTION:UCalgary Aquatic Centre - {session['type']}\\nPool: {session['pool']}\\nTime: {session['time_str']}
 LOCATION:UCalgary Aquatic Centre, 2500 University Drive NW, Calgary, AB
 CATEGORIES:Training,Swimming,Pool
-TRANSP:OPAQUE
+TRANSP:TRANSPARENT
 END:VEVENT
 """
     
