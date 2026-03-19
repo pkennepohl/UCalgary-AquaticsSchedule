@@ -25,9 +25,22 @@ jobs:
       
       - name: Fetch and generate schedule
         run: python3 pool_schedule_ical.py
+        continue-on-error: true
+      
+      - name: Configure git
+        run: |
+          git config user.name "Pool Schedule Bot"
+          git config user.email "action@github.com"
+      
+      - name: Commit debug HTML
+        run: |
+          git add schedule_debug.html || true
+          git commit -m "DEBUG: Schedule HTML dump - $(date -u +'%Y-%m-%d %H:%M UTC')" || true
+          git push || true
       
       - name: Check if schedule changed
         id: check_changes
+        if: hashFiles('pool-schedule.ics') != ''
         run: |
           if git diff --quiet pool-schedule.ics; then
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -37,13 +50,7 @@ jobs:
             echo "Schedule has been updated"
           fi
       
-      - name: Configure git
-        if: steps.check_changes.outputs.changed == 'true'
-        run: |
-          git config user.name "Pool Schedule Bot"
-          git config user.email "action@github.com"
-      
-      - name: Commit and push changes
+      - name: Commit and push schedule changes
         if: steps.check_changes.outputs.changed == 'true'
         run: |
           git add pool-schedule.ics
