@@ -6,7 +6,7 @@ permissions:
 on:
   schedule:
     # Run daily at 6 AM Calgary time (1 PM UTC, accounting for daylight saving)
-    - cron: '0 13 * * *'
+    - cron: '0 11 * * *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
