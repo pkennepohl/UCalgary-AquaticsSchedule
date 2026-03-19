@@ -26,64 +26,217 @@ def fetch_schedule():
 
 def parse_time_range(time_str):
     """
-    Parse a time range string like '7:30 - 9:30 a.m.' or '11 a.m. - 4 p.m.'
-    Returns tuple: (start_hour, start_min, end_hour, end_min)
+    Parse a time range string with maximum flexibility to handle staff input variations.
+    Handles: 7:30 - 9:30 a.m., 11 a.m. - 4 p.m., 7 - 10 p.m., 9.30 - 18.30, etc.
+    Returns tuple: (start_hour, start_min, end_hour, end_min) or None if unparseable.
     """
-    time_str = ' '.join(time_str.split()).strip()
+    if not time_str or not isinstance(time_str, str):
+        return None
+    
+    original = time_str
+    time_str = time_str.strip()
     
     # Remove asterisks and "Limited Lanes" text
     time_str = re.sub(r'\s*\*?Limited Lanes\s*$', '', time_str, flags=re.IGNORECASE)
+    time_str = time_str.strip()
     
-    # Pattern: HH:MM or H followed by optional :MM, then optional am/pm, dash, repeat
-    # Handles: "7:30 - 9:30 a.m." or "11 a.m. - 4 p.m." or "7 - 10 p.m."
-    pattern = r'(\d{1,2})(?::(\d{2}))?\s*(?:am|a\.m|a\.m\.)?[\s]*-[\s]*(\d{1,2})(?::(\d{2}))?\s*(?:am|a\.m|a\.m\.|pm|p\.m|p\.m\.)'
+    # Normalize: convert periods to colons for time separators (but keep a.m. periods)
+    # Replace time periods (e.g., "7.30") with colons, but preserve "a.m." and "p.m."
+    time_str = re.sub(r'(\d)\.(\d{2})(?![mp])', r'\1:\2', time_str)  # "7.30" → "7:30", but not "a.m"
     
-    match = re.search(pattern, time_str, re.IGNORECASE)
+    # Normalize different dash types to single dash
+    time_str = re.sub(r'[–—]', '-', time_str)  # em-dash, en-dash → regular dash
+    
+    # Normalize spaces around dash
+    time_str = re.sub(r'\s*-\s*', ' - ', time_str)
+    
+    # Try multiple patterns, from most specific to least specific
+    patterns = [
+        # Pattern 1: "HH:MM AM/PM - HH:MM AM/PM" (most specific)
+        r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
+        # Pattern 2: "HH:MM - HH:MM AM/PM"
+        r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
+        # Pattern 3: "H AM/PM - HH:MM AM/PM" (no minutes on start)
+        r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
+        # Pattern 4: "HH:MM AM/PM - HH AM/PM" (no minutes on end)
+        r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+        # Pattern 5: "H - HH AM/PM" (no minutes either side)
+        r'(\d{1,2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+        # Pattern 6: "HH:MM - HH AM/PM" (minutes on start, not end)
+        r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+        # Pattern 7: "HH:MM AM/PM - HH:MM" (no AM/PM on end)
+        r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})',
+        # Pattern 8: "H AM/PM - H AM/PM" (no colons, compact format)
+        r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+        # Pattern 9: Single time with AM/PM "HH:MM AM/PM"
+        r'(\d{1,2}):(\d{2})\s+([ap]\.?m\.?)(?:\s|$)',
+        # Pattern 10: Single time "H AM/PM" (no colon)
+        r'^(\d{1,2})\s+([ap]\.?m\.?)(?:\s|$)',
+    ]
+    
+    match = None
+    pattern_used = None
+    
+    for pattern in patterns:
+        match = re.search(pattern, time_str, re.IGNORECASE)
+        if match:
+            pattern_used = pattern
+            break
+    
     if not match:
+        # Could not parse
         return None
     
-    start_hour = int(match.group(1))
-    start_min = int(match.group(2) or 0)
-    end_hour = int(match.group(3))
-    end_min = int(match.group(4) or 0)
+    groups = match.groups()
     
-    # Split by dash to check which side has which meridiem
-    dash_pos = time_str.find('-')
-    before_dash = time_str[:dash_pos].lower()
-    after_dash = time_str[dash_pos+1:].lower()
-    
-    # Check each side for am/pm
-    before_has_am = 'am' in before_dash
-    before_has_pm = 'pm' in before_dash
-    after_has_am = 'am' in after_dash
-    after_has_pm = 'pm' in after_dash
-    
-    # Apply 12-hour conversion based on what's specified
-    # Start time: use before_dash indicator, or infer from after_dash if not specified
-    if before_has_pm:
-        if start_hour != 12:
+    # Extract components based on which pattern matched
+    if pattern_used == patterns[0]:  # "HH:MM AM/PM - HH:MM AM/PM"
+        start_hour, start_min, start_ampm, end_hour, end_min, end_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour, end_min = int(end_hour), int(end_min)
+        start_ampm_normalized = normalize_ampm(start_ampm)
+        end_ampm_normalized = normalize_ampm(end_ampm)
+        
+        if start_ampm_normalized == 'pm' and start_hour != 12:
             start_hour += 12
-    elif before_has_am:
-        if start_hour == 12:
-            start_hour = 0  # 12 a.m. = midnight
-    elif after_has_pm and not after_has_am:
-        # No am/pm before dash, but "pm" after and no "am" means both are PM
-        if start_hour != 12:
-            start_hour += 12
+        elif start_ampm_normalized == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        if end_ampm_normalized == 'pm' and end_hour != 12:
+            end_hour += 12
+        elif end_ampm_normalized == 'am' and end_hour == 12:
+            end_hour = 0
     
-    # End time: use after_dash indicator
-    if after_has_pm:
-        if end_hour != 12:
+    elif pattern_used == patterns[1]:  # "HH:MM - HH:MM AM/PM"
+        start_hour, start_min, end_hour, end_min, end_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour, end_min = int(end_hour), int(end_min)
+        end_ampm_normalized = normalize_ampm(end_ampm)
+        
+        # Apply end_ampm to both if only end is specified
+        if end_ampm_normalized == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif end_ampm_normalized == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    elif pattern_used == patterns[2]:  # "H AM/PM - HH:MM AM/PM"
+        start_hour, start_ampm, end_hour, end_min, end_ampm = groups
+        start_hour = int(start_hour)
+        start_min = 0
+        end_hour, end_min = int(end_hour), int(end_min)
+        start_ampm_normalized = normalize_ampm(start_ampm)
+        end_ampm_normalized = normalize_ampm(end_ampm)
+        
+        if start_ampm_normalized == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_normalized == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        if end_ampm_normalized == 'pm' and end_hour != 12:
             end_hour += 12
-    elif after_has_am:
-        if end_hour == 12:
-            end_hour = 0  # 12 a.m. = midnight
-    elif before_has_pm and not before_has_am:
-        # No am/pm after dash, but "pm" before and no "am" means both are PM
-        if end_hour != 12:
+        elif end_ampm_normalized == 'am' and end_hour == 12:
+            end_hour = 0
+    
+    elif pattern_used == patterns[3]:  # "HH:MM AM/PM - HH AM/PM"
+        start_hour, start_min, start_ampm, end_hour, end_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour = int(end_hour)
+        end_min = 0
+        start_ampm_normalized = normalize_ampm(start_ampm)
+        end_ampm_normalized = normalize_ampm(end_ampm)
+        
+        if start_ampm_normalized == 'pm' and start_hour != 12:
+            start_hour += 12
+        elif start_ampm_normalized == 'am' and start_hour == 12:
+            start_hour = 0
+        
+        if end_ampm_normalized == 'pm' and end_hour != 12:
             end_hour += 12
+        elif end_ampm_normalized == 'am' and end_hour == 12:
+            end_hour = 0
+    
+    elif pattern_used == patterns[4]:  # "H - HH AM/PM"
+        start_hour, end_hour, end_ampm = groups
+        start_hour = int(start_hour)
+        start_min = 0
+        end_hour = int(end_hour)
+        end_min = 0
+        end_ampm_normalized = normalize_ampm(end_ampm)
+        
+        # Apply end_ampm to both
+        if end_ampm_normalized == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif end_ampm_normalized == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    elif pattern_used == patterns[5]:  # "HH:MM - HH AM/PM"
+        start_hour, start_min, end_hour, end_ampm = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour = int(end_hour)
+        end_min = 0
+        end_ampm_normalized = normalize_ampm(end_ampm)
+        
+        # Apply end_ampm to both
+        if end_ampm_normalized == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif end_ampm_normalized == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    elif pattern_used == patterns[6]:  # "HH:MM AM/PM - HH:MM"
+        start_hour, start_min, start_ampm, end_hour, end_min = groups
+        start_hour, start_min = int(start_hour), int(start_min)
+        end_hour, end_min = int(end_hour), int(end_min)
+        start_ampm_normalized = normalize_ampm(start_ampm)
+        
+        # Apply start_ampm to both
+        if start_ampm_normalized == 'pm':
+            if start_hour != 12:
+                start_hour += 12
+            if end_hour != 12:
+                end_hour += 12
+        elif start_ampm_normalized == 'am':
+            if start_hour == 12:
+                start_hour = 0
+            if end_hour == 12:
+                end_hour = 0
+    
+    # Validate the result
+    if start_hour < 0 or start_hour > 23 or end_hour < 0 or end_hour > 23:
+        return None
+    
+    if start_min < 0 or start_min > 59 or end_min < 0 or end_min > 59:
+        return None
     
     return (start_hour, start_min, end_hour, end_min)
+
+def normalize_ampm(ampm_str):
+    """Normalize various AM/PM formats to 'am' or 'pm'."""
+    if not ampm_str:
+        return None
+    ampm_str = ampm_str.lower().replace('.', '').replace(' ', '')
+    if ampm_str.startswith('p'):
+        return 'pm'
+    elif ampm_str.startswith('a'):
+        return 'am'
+    return None
 
 def parse_schedule(html):
     """Parse the HTML by working directly with nested <ul> and <li> structure."""
