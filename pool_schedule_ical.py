@@ -315,6 +315,10 @@ def apply_chronological_correction(sessions):
     for key, group in groups.items():
         month, day_num, swim_type = key
         
+        # Only validate if there are 2+ sessions of the same type on the same day
+        if len(group) < 2:
+            continue
+        
         # Check each session against the previous one (only within same type)
         for i in range(1, len(group)):
             prev_idx, prev_session = group[i-1]
@@ -404,7 +408,7 @@ def apply_chronological_correction(sessions):
             print(correction)
         print("=" * 120 + "\n")
     
-    return sessions
+    return sessions, corrections
 
 def parse_schedule(html):
     """Parse the HTML and extract schedule."""
@@ -485,7 +489,7 @@ def parse_schedule(html):
     
     return sessions
 
-def create_ics(sessions):
+def create_ics(sessions, correction_log=None):
     """Generate iCal file content."""
     ics = """BEGIN:VCALENDAR
 VERSION:2.0
@@ -495,7 +499,13 @@ METHOD:PUBLISH
 X-WR-CALNAME:UCalgary Pool Schedule
 X-WR-TIMEZONE:America/Edmonton
 REFRESH-INTERVAL;VALUE=DURATION:PT24H
-BEGIN:VTIMEZONE
+"""
+    
+    # Add debug comment if corrections were made
+    if correction_log:
+        ics += f"COMMENT:DEBUG - {len(correction_log)} AM/PM corrections made\n"
+    
+    ics += """BEGIN:VTIMEZONE
 TZID:America/Edmonton
 BEGIN:DAYLIGHT
 DTSTART:20260308T020000
@@ -558,10 +568,10 @@ def main():
     print(f"Found {len(sessions)} sessions")
     
     print("Validating chronological order...")
-    sessions = apply_chronological_correction(sessions)
+    sessions, corrections = apply_chronological_correction(sessions)
     
     if sessions:
-        ics_content = create_ics(sessions)
+        ics_content = create_ics(sessions, correction_log=corrections)
         
         with open('pool-schedule.ics', 'w') as f:
             f.write(ics_content)
