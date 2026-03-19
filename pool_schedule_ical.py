@@ -51,36 +51,39 @@ def parse_time_range(time_str):
     time_str = re.sub(r'\s*-\s*', ' - ', time_str)
     
     # Try multiple patterns, from most specific to least specific
+    # CRITICAL: Order matters! More specific patterns must come before less specific ones.
     patterns = [
-        # Pattern 1: "HH:MM AM/PM - HH:MM AM/PM" (most specific)
+        # Pattern 1: "HH:MM AM/PM - HH:MM AM/PM" (most specific - both have colons and ampm)
         r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
-        # Pattern 2: "HH:MM - HH:MM AM/PM"
+        # Pattern 2: "HH:MM - HH:MM AM/PM" (both have colons, ampm on end only)
         r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
-        # Pattern 3: "H AM/PM - HH:MM AM/PM" (no minutes on start)
-        r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
-        # Pattern 4: "HH:MM AM/PM - HH AM/PM" (no minutes on end)
-        r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
-        # Pattern 5: "H - HH AM/PM" (no minutes either side)
-        r'(\d{1,2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
-        # Pattern 6: "HH:MM - HH AM/PM" (minutes on start, not end)
+        # Pattern 3: "H - HH:MM AM/PM" (start no colon, end has colon) - MUST come before Pattern 5!
+        r'(\d{1,2})\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
+        # Pattern 4: "HH:MM - HH AM/PM" (start has colon, end no colon) - MUST come before Pattern 5!
         r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
-        # Pattern 7: "HH:MM AM/PM - HH:MM" (no AM/PM on end)
+        # Pattern 5: "H AM/PM - HH:MM AM/PM" (start no colon with ampm, end has colon)
+        r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)',
+        # Pattern 6: "HH:MM AM/PM - HH AM/PM" (start has colon with ampm, end no colon)
+        r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+        # Pattern 7: "HH:MM AM/PM - HH:MM" (start has both, end has colon but no ampm)
         r'(\d{1,2}):(\d{2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2}):(\d{2})',
-        # Pattern 8: "H AM/PM - H AM/PM" (no colons, compact format)
+        # Pattern 8: "H - HH AM/PM" (no minutes either side) - comes after more specific patterns!
+        r'(\d{1,2})\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
+        # Pattern 9: "H AM/PM - H AM/PM" (no colons, compact format)
         r'(\d{1,2})\s*([ap]\.?m\.?)\s*-\s*(\d{1,2})\s*([ap]\.?m\.?)',
-        # Pattern 9: Single time with AM/PM "HH:MM AM/PM"
+        # Pattern 10: Single time with AM/PM "HH:MM AM/PM"
         r'(\d{1,2}):(\d{2})\s+([ap]\.?m\.?)(?:\s|$)',
-        # Pattern 10: Single time "H AM/PM" (no colon)
+        # Pattern 11: Single time "H AM/PM" (no colon)
         r'^(\d{1,2})\s+([ap]\.?m\.?)(?:\s|$)',
     ]
     
     match = None
-    pattern_used = None
+    pattern_index = None
     
-    for pattern in patterns:
+    for idx, pattern in enumerate(patterns):
         match = re.search(pattern, time_str, re.IGNORECASE)
         if match:
-            pattern_used = pattern
+            pattern_index = idx
             break
     
     if not match:
@@ -89,8 +92,8 @@ def parse_time_range(time_str):
     
     groups = match.groups()
     
-    # Extract components based on which pattern matched
-    if pattern_used == patterns[0]:  # "HH:MM AM/PM - HH:MM AM/PM"
+    # Extract components based on which pattern matched (using index)
+    if pattern_index == 0:  # "HH:MM AM/PM - HH:MM AM/PM"
         start_hour, start_min, start_ampm, end_hour, end_min, end_ampm = groups
         start_hour, start_min = int(start_hour), int(start_min)
         end_hour, end_min = int(end_hour), int(end_min)
@@ -107,7 +110,7 @@ def parse_time_range(time_str):
         elif end_ampm_normalized == 'am' and end_hour == 12:
             end_hour = 0
     
-    elif pattern_used == patterns[1]:  # "HH:MM - HH:MM AM/PM"
+    elif pattern_index == 1:  # "HH:MM - HH:MM AM/PM"
         start_hour, start_min, end_hour, end_min, end_ampm = groups
         start_hour, start_min = int(start_hour), int(start_min)
         end_hour, end_min = int(end_hour), int(end_min)
@@ -125,7 +128,7 @@ def parse_time_range(time_str):
             if end_hour == 12:
                 end_hour = 0
     
-    elif pattern_used == patterns[2]:  # "H AM/PM - HH:MM AM/PM"
+    elif pattern_index == 2:  # "H AM/PM - HH:MM AM/PM"
         start_hour, start_ampm, end_hour, end_min, end_ampm = groups
         start_hour = int(start_hour)
         start_min = 0
@@ -143,7 +146,7 @@ def parse_time_range(time_str):
         elif end_ampm_normalized == 'am' and end_hour == 12:
             end_hour = 0
     
-    elif pattern_used == patterns[3]:  # "HH:MM AM/PM - HH AM/PM"
+    elif pattern_index == 3:  # "HH:MM AM/PM - HH AM/PM"
         start_hour, start_min, start_ampm, end_hour, end_ampm = groups
         start_hour, start_min = int(start_hour), int(start_min)
         end_hour = int(end_hour)
@@ -161,7 +164,7 @@ def parse_time_range(time_str):
         elif end_ampm_normalized == 'am' and end_hour == 12:
             end_hour = 0
     
-    elif pattern_used == patterns[4]:  # "H - HH AM/PM"
+    elif pattern_index == 4:  # "H - HH AM/PM"
         start_hour, end_hour, end_ampm = groups
         start_hour = int(start_hour)
         start_min = 0
@@ -181,7 +184,7 @@ def parse_time_range(time_str):
             if end_hour == 12:
                 end_hour = 0
     
-    elif pattern_used == patterns[5]:  # "HH:MM - HH AM/PM"
+    elif pattern_index == 5:  # "HH:MM - HH AM/PM"
         start_hour, start_min, end_hour, end_ampm = groups
         start_hour, start_min = int(start_hour), int(start_min)
         end_hour = int(end_hour)
@@ -200,7 +203,7 @@ def parse_time_range(time_str):
             if end_hour == 12:
                 end_hour = 0
     
-    elif pattern_used == patterns[6]:  # "HH:MM AM/PM - HH:MM"
+    elif pattern_index == 6:  # "HH:MM AM/PM - HH:MM"
         start_hour, start_min, start_ampm, end_hour, end_min = groups
         start_hour, start_min = int(start_hour), int(start_min)
         end_hour, end_min = int(end_hour), int(end_min)
@@ -218,7 +221,7 @@ def parse_time_range(time_str):
             if end_hour == 12:
                 end_hour = 0
     
-    elif pattern_used == patterns[7]:  # "H AM/PM - H AM/PM" (pattern 8)
+    elif pattern_index == 7:  # "H AM/PM - H AM/PM" (pattern 8)
         start_hour, start_ampm, end_hour, end_ampm = groups
         start_hour = int(start_hour)
         start_min = 0
@@ -237,7 +240,7 @@ def parse_time_range(time_str):
         elif end_ampm_normalized == 'am' and end_hour == 12:
             end_hour = 0
     
-    elif pattern_used == patterns[8]:  # "HH:MM AM/PM" (single time, pattern 9)
+    elif pattern_index == 8:  # "HH:MM AM/PM" (single time, pattern 9)
         start_hour, start_min, start_ampm = groups
         start_hour, start_min = int(start_hour), int(start_min)
         start_ampm_normalized = normalize_ampm(start_ampm)
@@ -250,7 +253,7 @@ def parse_time_range(time_str):
         # For single time, we can't proceed without an end time
         return None
     
-    elif pattern_used == patterns[9]:  # "H AM/PM" (single time, pattern 10)
+    elif pattern_index == 9:  # "H AM/PM" (single time, pattern 10)
         start_hour, start_ampm = groups
         start_hour = int(start_hour)
         start_ampm_normalized = normalize_ampm(start_ampm)
