@@ -47,53 +47,41 @@ def parse_time_range(time_str):
     end_hour = int(match.group(3))
     end_min = int(match.group(4) or 0)
     
-    # Determine AM/PM based on what appears in the string
-    time_lower = time_str.lower()
+    # Split by dash to check which side has which meridiem
+    dash_pos = time_str.find('-')
+    before_dash = time_str[:dash_pos].lower()
+    after_dash = time_str[dash_pos+1:].lower()
     
-    # Split by dash to check before/after
-    parts = time_str.split('-')
-    before_dash = parts[0].lower()
-    after_dash = '-'.join(parts[1:]).lower()
-    
+    # Check each side for am/pm
     before_has_am = 'am' in before_dash
     before_has_pm = 'pm' in before_dash
     after_has_am = 'am' in after_dash
     after_has_pm = 'pm' in after_dash
     
-    # Logic:
-    # If only one of before/after has am/pm, it applies to both
-    # If different on each side, use what's specified
-    if before_has_am and not before_has_pm and not after_has_pm and not after_has_am:
-        # Both AM
-        pass
-    elif before_has_pm and not before_has_am and not after_has_am and not after_has_pm:
-        # Both PM
+    # Apply 12-hour conversion based on what's specified
+    # Start time: use before_dash indicator, or infer from after_dash if not specified
+    if before_has_pm:
         if start_hour != 12:
             start_hour += 12
-        if end_hour != 12:
-            end_hour += 12
-    elif before_has_am and after_has_pm:
-        # Start AM, end PM
-        if end_hour != 12:
-            end_hour += 12
-    elif before_has_pm and after_has_am:
-        # Start PM, end AM (next day, unusual)
+    elif before_has_am:
+        if start_hour == 12:
+            start_hour = 0  # 12 a.m. = midnight
+    elif after_has_pm and not after_has_am:
+        # No am/pm before dash, but "pm" after and no "am" means both are PM
         if start_hour != 12:
             start_hour += 12
-    elif not before_has_am and not before_has_pm and (after_has_am or after_has_pm):
-        # No AM/PM before dash, use what's after
-        if after_has_pm:
-            if start_hour != 12:
-                start_hour += 12
-            if end_hour != 12:
-                end_hour += 12
-    else:
-        # Default: check if "pm" appears anywhere in the whole string
-        if 'pm' in time_lower:
-            if start_hour != 12:
-                start_hour += 12
-            if end_hour != 12:
-                end_hour += 12
+    
+    # End time: use after_dash indicator
+    if after_has_pm:
+        if end_hour != 12:
+            end_hour += 12
+    elif after_has_am:
+        if end_hour == 12:
+            end_hour = 0  # 12 a.m. = midnight
+    elif before_has_pm and not before_has_am:
+        # No am/pm after dash, but "pm" before and no "am" means both are PM
+        if end_hour != 12:
+            end_hour += 12
     
     return (start_hour, start_min, end_hour, end_min)
 
@@ -112,6 +100,10 @@ def parse_schedule(html):
     # Find all <p> tags
     for p_tag in soup.find_all('p'):
         p_text = p_tag.get_text()
+        
+        # Skip the introductory combo header
+        if 'Inflatable Swim' in p_text:
+            continue
         
         # Check if this is a schedule header
         if 'Adult/Youth Lane Swim' not in p_text and 'Family and Lane Swim' not in p_text:
