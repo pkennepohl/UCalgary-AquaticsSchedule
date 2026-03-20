@@ -538,7 +538,11 @@ END:VTIMEZONE
         summary = f"Pool - {session['pool']}"
         description = f"{session['swim_type']}\\nTime: {session['time_str']}"
         
+        # Create unique UID for this event (required by Outlook)
+        uid = f"pool-{date_str}-{session['start_hour']:02d}{session['start_min']:02d}-{session['pool']}@ucalgary.ca"
+        
         ics += f"""BEGIN:VEVENT
+UID:{uid}
 DTSTART;TZID=America/Edmonton:{start_time}
 DTEND;TZID=America/Edmonton:{end_time}
 SUMMARY:{summary}
