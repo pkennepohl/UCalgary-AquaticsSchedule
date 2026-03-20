@@ -410,6 +410,62 @@ def apply_chronological_correction(sessions):
     
     return sessions, corrections
 
+def extract_swim_type_rules(html):
+    """
+    Extract swim type rules/descriptions from the HTML.
+    Returns a dict mapping swim type names to their rule descriptions.
+    """
+    if not html:
+        return {}
+    
+    soup = BeautifulSoup(html, 'html.parser')
+    all_text = soup.get_text()
+    rules = {}
+    
+    # Extract Adult/Youth Lane Swim rules
+    adult_idx = all_text.find('This is a lane swim opportunity')
+    if adult_idx > 0:
+        section_end = all_text.find('Family and Lane Swimming', adult_idx)
+        if section_end < 0:
+            section_end = adult_idx + 800
+        section = all_text[adult_idx:section_end]
+        
+        # Capture key points: lane sizes, equipment, swim test
+        lines = [line.strip() for line in section.split('\n') if line.strip() and len(line.strip()) > 10]
+        # Filter out Family/unrelated content
+        lines = [l for l in lines if 'Family' not in l and 'Inflatable' not in l]
+        rule_text = ' '.join(lines[:4])
+        if rule_text:
+            rules['Adult/Youth Lane Swim'] = rule_text
+    
+    # Extract Family and Lane Swim rules  
+    family_idx = all_text.find('Defined family swim space available')
+    if family_idx > 0:
+        section_end = all_text.find('Inflatable', family_idx)
+        if section_end < 0:
+            section_end = family_idx + 800
+        section = all_text[family_idx:section_end]
+        
+        lines = [line.strip() for line in section.split('\n') if line.strip() and len(line.strip()) > 8]
+        lines = [l for l in lines if 'Adult' not in l and 'Inflatable' not in l]
+        rule_text = ' '.join(lines[:6])
+        if rule_text:
+            rules['Family and Lane Swim'] = rule_text
+    
+    # Extract Inflatable Swim rules
+    inflatable_idx = all_text.find('Not regularly offered')
+    if inflatable_idx > 0:
+        section_end = inflatable_idx + 800
+        section = all_text[inflatable_idx:section_end]
+        
+        lines = [line.strip() for line in section.split('\n') if line.strip() and len(line.strip()) > 8]
+        lines = [l for l in lines if not l.startswith('Adult') and not l.startswith('Family')]
+        rule_text = ' '.join(lines[:7])
+        if rule_text:
+            rules['Inflatable Swim'] = rule_text
+    
+    return rules
+
 def parse_schedule(html):
     """Parse the HTML and extract schedule."""
     if not html:
@@ -493,8 +549,11 @@ def parse_schedule(html):
     
     return sessions
 
-def create_ics(sessions, correction_log=None):
+def create_ics(sessions, correction_log=None, swim_type_rules=None):
     """Generate iCal file content."""
+    if swim_type_rules is None:
+        swim_type_rules = {}
+    
     ics = """BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//UCalgary Pool Schedule//NONSGML v1.0//EN
@@ -551,15 +610,40 @@ END:VTIMEZONE
         asterisk = "*" if session['limited_lanes'] else ""
         summary = f"{session['pool']} Lane Swim{asterisk} ({swim_type_short})"
         
-        # Build new-format description with proper iCal line breaks
-        description = (
-            "NOTE: An asterisk (*) indicates limited lanes available.\\n"
-            "\\n"
-            "Source: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\\n"
-            "\\n"
-            "Subscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\\n"
-            "GitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule"
-        )
+        # Build customized rule text based on pool size
+        rule_text = swim_type_rules.get(session['swim_type'], '')
+        
+        # Customize rule for Adult/Youth to include pool size
+        if "Adult/Youth" in session['swim_type'] and rule_text:
+            # Replace generic lane references with specific pool size
+            rule_text = rule_text.replace('25m or 50m lanes', f"{session['pool']} lanes")
+            rule_text = rule_text.replace('25m or 50m', session['pool'])
+        
+        # Build new-format description with DETAILS section
+        if rule_text:
+            description = (
+                "NOTE: An asterisk (*) indicates limited lanes available.\\n"
+                "\\n"
+                f"DETAILS:\\n"
+                f"{session['swim_type']} — {rule_text}\\n"
+                "\\n"
+                "CALENDAR INFO:\\n"
+                "Source: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\\n"
+                "Subscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\\n"
+                "GitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule"
+            )
+        else:
+            # Fallback if rules not extracted
+            description = (
+                "NOTE: An asterisk (*) indicates limited lanes available.\\n"
+                "\\n"
+                f"Type: {session['swim_type']}\\n"
+                "\\n"
+                "CALENDAR INFO:\\n"
+                "Source: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\\n"
+                "Subscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\\n"
+                "GitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule"
+            )
         
         # Create unique UID for this event (required by Outlook)
         uid = f"pool-{date_str}-{session['start_hour']:02d}{session['start_min']:02d}-{session['pool']}@ucalgary.ca"
@@ -594,11 +678,14 @@ def main():
     
     print(f"Found {len(sessions)} sessions")
     
+    print("Extracting swim type rules...")
+    swim_type_rules = extract_swim_type_rules(html)
+    
     print("Validating chronological order...")
     sessions, corrections = apply_chronological_correction(sessions)
     
     if sessions:
-        ics_content = create_ics(sessions, correction_log=corrections)
+        ics_content = create_ics(sessions, correction_log=corrections, swim_type_rules=swim_type_rules)
         
         with open('pool-schedule.ics', 'w') as f:
             f.write(ics_content)
