@@ -474,6 +474,9 @@ def parse_schedule(html):
                 
                 start_h, start_m, end_h, end_m = parsed
                 
+                # Check if this session has limited lanes
+                limited_lanes = '*Limited Lanes' in time_text
+                
                 sessions.append({
                     'day_name': day_name,
                     'month': month_name,
@@ -484,7 +487,8 @@ def parse_schedule(html):
                     'end_min': end_m,
                     'pool': pool,
                     'swim_type': swim_type,
-                    'time_str': time_str
+                    'time_str': time_str,
+                    'limited_lanes': limited_lanes
                 })
     
     return sessions
@@ -535,8 +539,27 @@ END:VTIMEZONE
         start_time = f"{date_str}T{session['start_hour']:02d}{session['start_min']:02d}00"
         end_time = f"{date_str}T{session['end_hour']:02d}{session['end_min']:02d}00"
         
-        summary = f"Pool - {session['pool']}"
-        description = f"{session['swim_type']}\\nTime: {session['time_str']}"
+        # Build new-format title
+        # Extract swim type abbreviation: "Adult/Youth Lane Swim" -> "Adult/Youth", "Family and Lane Swim" -> "Family"
+        if "Adult/Youth" in session['swim_type']:
+            swim_type_short = "Adult/Youth"
+        elif "Family" in session['swim_type']:
+            swim_type_short = "Family"
+        else:
+            swim_type_short = session['swim_type']
+        
+        asterisk = "*" if session['limited_lanes'] else ""
+        summary = f"{session['pool']} Lane Swim{asterisk} ({swim_type_short})"
+        
+        # Build new-format description with proper iCal line breaks
+        description = (
+            "NOTE: An asterisk (*) indicates limited lanes available.\\n"
+            "\\n"
+            "Source: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\\n"
+            "\\n"
+            "Subscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\\n"
+            "GitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule"
+        )
         
         # Create unique UID for this event (required by Outlook)
         uid = f"pool-{date_str}-{session['start_hour']:02d}{session['start_min']:02d}-{session['pool']}@ucalgary.ca"
