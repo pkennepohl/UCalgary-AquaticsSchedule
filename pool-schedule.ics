@@ -28,408 +28,408 @@ BEGIN:VEVENT
 UID:pool-20260316-0730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260316T073000
 DTEND;TZID=America/Edmonton:20260316T093000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260316-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260316T110000
 DTEND;TZID=America/Edmonton:20260316T160000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 4 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260316-1730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260316T173000
 DTEND;TZID=America/Edmonton:20260316T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 5:30 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260317-0715-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260317T071500
 DTEND;TZID=America/Edmonton:20260317T093000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:15 - 9:30 a.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260317-1100-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260317T110000
 DTEND;TZID=America/Edmonton:20260317T160000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 4 p.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260317-1930-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260317T193000
 DTEND;TZID=America/Edmonton:20260317T220000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 10 p.m.
+SUMMARY:50m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260318-0730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260318T073000
 DTEND;TZID=America/Edmonton:20260318T093000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260318-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260318T110000
 DTEND;TZID=America/Edmonton:20260318T140000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:25m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260318-1900-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260318T190000
 DTEND;TZID=America/Edmonton:20260318T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260319-0730-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260319T073000
 DTEND;TZID=America/Edmonton:20260319T093000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260319-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260319T110000
 DTEND;TZID=America/Edmonton:20260319T140000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:25m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260319-1600-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260319T160000
 DTEND;TZID=America/Edmonton:20260319T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 4 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260320-0715-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260320T071500
 DTEND;TZID=America/Edmonton:20260320T093000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:15 - 9:30 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260320-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260320T110000
 DTEND;TZID=America/Edmonton:20260320T133000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 1:30 p.m.
+SUMMARY:25m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260320-1800-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260320T180000
 DTEND;TZID=America/Edmonton:20260320T210000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 6 - 9 p.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260321-1800-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260321T180000
 DTEND;TZID=America/Edmonton:20260321T203000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 6 - 8:30 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260322-1930-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260322T193000
 DTEND;TZID=America/Edmonton:20260322T203000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 8:30 p.m.
+SUMMARY:25m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260321-0930-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260321T093000
 DTEND;TZID=America/Edmonton:20260321T180000
-SUMMARY:Pool - 25m
-DESCRIPTION:Family and Lane Swim\nTime: 9:30 a.m. - 6 p.m.
+SUMMARY:25m Lane Swim (Family)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260322-1030-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260322T103000
 DTEND;TZID=America/Edmonton:20260322T163000
-SUMMARY:Pool - 25m
-DESCRIPTION:Family and Lane Swim\nTime: 10:30 a.m. - 4:30 p.m.
+SUMMARY:25m Lane Swim* (Family)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260323-0730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260323T073000
 DTEND;TZID=America/Edmonton:20260323T093000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260323-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260323T110000
 DTEND;TZID=America/Edmonton:20260323T140000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260323-1600-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260323T160000
 DTEND;TZID=America/Edmonton:20260323T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 4 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260324-0730-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260324T073000
 DTEND;TZID=America/Edmonton:20260324T093000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260324-1100-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260324T110000
 DTEND;TZID=America/Edmonton:20260324T140000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:50m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260324-1600-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260324T160000
 DTEND;TZID=America/Edmonton:20260324T220000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 4 - 10 p.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260325-0730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260325T073000
 DTEND;TZID=America/Edmonton:20260325T093000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260325-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260325T110000
 DTEND;TZID=America/Edmonton:20260325T140000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:25m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260325-1600-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260325T160000
 DTEND;TZID=America/Edmonton:20260325T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 4 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260326-0730-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260326T073000
 DTEND;TZID=America/Edmonton:20260326T093000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260326-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260326T110000
 DTEND;TZID=America/Edmonton:20260326T140000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260326-1730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260326T173000
 DTEND;TZID=America/Edmonton:20260326T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 5:30 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260327-0730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260327T073000
 DTEND;TZID=America/Edmonton:20260327T093000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260327-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260327T110000
 DTEND;TZID=America/Edmonton:20260327T133000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 1:30 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260327-1800-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260327T180000
 DTEND;TZID=America/Edmonton:20260327T210000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 6 - 9 p.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260328-1800-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260328T180000
 DTEND;TZID=America/Edmonton:20260328T203000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 6 - 8:30 p.m.
+SUMMARY:25m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260329-1930-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260329T193000
 DTEND;TZID=America/Edmonton:20260329T203000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 8:30 p.m.
+SUMMARY:25m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260328-1230-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260328T123000
 DTEND;TZID=America/Edmonton:20260328T180000
-SUMMARY:Pool - 25m
-DESCRIPTION:Family and Lane Swim\nTime: 12:30 - 6 p.m.
+SUMMARY:25m Lane Swim* (Family)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260329-1030-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260329T103000
 DTEND;TZID=America/Edmonton:20260329T163000
-SUMMARY:Pool - 25m
-DESCRIPTION:Family and Lane Swim\nTime: 10:30 a.m. - 4:30 p.m.
+SUMMARY:25m Lane Swim* (Family)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260330-0730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260330T073000
 DTEND;TZID=America/Edmonton:20260330T093000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260330-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260330T110000
 DTEND;TZID=America/Edmonton:20260330T140000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260330-1730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260330T173000
 DTEND;TZID=America/Edmonton:20260330T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 5:30 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260331-0730-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260331T073000
 DTEND;TZID=America/Edmonton:20260331T093000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260331-1100-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260331T110000
 DTEND;TZID=America/Edmonton:20260331T140000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:50m Lane Swim (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260331-2100-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260331T210000
 DTEND;TZID=America/Edmonton:20260331T220000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 9 - 10 p.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260417-0730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260417T073000
 DTEND;TZID=America/Edmonton:20260417T093000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260417-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260417T110000
 DTEND;TZID=America/Edmonton:20260417T140000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260417-1930-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260417T193000
 DTEND;TZID=America/Edmonton:20260417T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260427-0730-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260427T073000
 DTEND;TZID=America/Edmonton:20260427T093000
-SUMMARY:Pool - 50m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 7:30 - 9:30 a.m.
+SUMMARY:50m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260427-1100-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260427T110000
 DTEND;TZID=America/Edmonton:20260427T140000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 11 a.m. - 2 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260427-1730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260427T173000
 DTEND;TZID=America/Edmonton:20260427T203000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 5:30 - 8:30 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260427-2115-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260427T211500
 DTEND;TZID=America/Edmonton:20260427T220000
-SUMMARY:Pool - 25m
-DESCRIPTION:Adult/Youth Lane Swim\nTime: 9:15 - 10 p.m.
+SUMMARY:25m Lane Swim* (Adult/Youth)
+DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\n\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR
