@@ -502,7 +502,7 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:UCalgary Pool Schedule
 X-WR-TIMEZONE:America/Edmonton
-REFRESH-INTERVAL;VALUE=DURATION:PT24H
+REFRESH-INTERVAL;VALUE=DURATION:PT8H
 """
     
     # Add debug comment if corrections were made
