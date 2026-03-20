@@ -653,6 +653,7 @@ UID:{uid}
 DTSTART;TZID=America/Edmonton:{start_time}
 DTEND;TZID=America/Edmonton:{end_time}
 SUMMARY:{summary}
+LOCATION:UCalgary Aquatic Centre https://maps.google.com/?q=UCalgary+Aquatic+Centre+Calgary
 DESCRIPTION:{description}
 TRANSP:TRANSPARENT
 END:VEVENT

@@ -10,6 +10,7 @@ A lightweight utility that automatically converts the UCalgary Aquatic Centre po
   - Pool size (25m or 50m)
   - Swim type (Adult/Youth Lane Swim or Family and Lane Swim)
   - Limited lanes indicator (*)
+  - **Location** – UCalgary Aquatic Centre with clickable Google Maps link
   - **Dynamic swim type rules** – Rules extracted from UCalgary's website and customized to each session
   - Source and subscription information in event description
 - **Error correction** – Handles common data entry errors (AM/PM mistakes) through chronological validation
