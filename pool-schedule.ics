@@ -449,7 +449,7 @@ END:VEVENT
 BEGIN:VEVENT
 UID:pool-20260424-1930-50m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20260424T193000
-DTEND;TZID=America/Edmonton:20260424T210000
+DTEND;TZID=America/Edmonton:20260424T213000
 SUMMARY:50m Lane Swim (Adult/Youth)
 LOCATION:UCalgary Aquatic Centre https://maps.google.com/?q=UCalgary+Aquatic+Centre+Calgary
 DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nDETAILS:\nAdult/Youth Lane Swim — This is a lane swim opportunity to practice your swimming skills with 50m lanes.Pull buoys are available to use.A swim test may be required in order to access the deep end. Age Restriction Lane swimmers must be 12 years or older and participating in lane swim only. Slow, Medium, Fast\n\nCALENDAR INFO:\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
