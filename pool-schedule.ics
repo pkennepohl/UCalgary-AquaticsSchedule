@@ -628,15 +628,6 @@ DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nDETAILS:
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
-UID:pool-20261025-1730-25m@ucalgary.ca
-DTSTART;TZID=America/Edmonton:20261025T173000
-DTEND;TZID=America/Edmonton:20261025T203000
-SUMMARY:25m Lane Swim* (Family)
-LOCATION:UCalgary Aquatic Centre https://maps.google.com/?q=UCalgary+Aquatic+Centre+Calgary
-DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nDETAILS:\nFamily and Lane Swim — Defined family swim space available in both the shallow and the deep end25m defined lanes for lane swimming in the shallow endFloating mats, foam logs and preschool slide are availableFlutter boards and pull buoys are freely availableSwim test may be required in order to access the deep end Stay Alert Children under 7 must be within arms reach of a parent/guardian at all times. One parent or guardian must be present for every two children 0-7 years old. Slow, Medium, Fast Lane swimmers: please select the most appropriate lane based on swimming ability.\n\nCALENDAR INFO:\nSource: https://active-living.ucalgary.ca/facilities/aquatic-centre/pool-schedule-hours\nSubscribe: https://raw.githubusercontent.com/pkennepohl/UCalgary-AquaticsSchedule/main/pool-schedule.ics\nGitHub: https://github.com/pkennepohl/UCalgary-AquaticsSchedule
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:pool-20261026-0730-25m@ucalgary.ca
 DTSTART;TZID=America/Edmonton:20261026T073000
 DTEND;TZID=America/Edmonton:20261026T093000
