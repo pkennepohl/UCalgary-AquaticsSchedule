@@ -222,8 +222,8 @@ DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nDETAILS:
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
-UID:pool-20261210-0800-50m@ucalgary.ca
-DTSTART;TZID=America/Edmonton:20261210T080000
+UID:pool-20261210-0730-50m@ucalgary.ca
+DTSTART;TZID=America/Edmonton:20261210T073000
 DTEND;TZID=America/Edmonton:20261210T093000
 SUMMARY:50m Lane Swim* (Adult/Youth)
 LOCATION:UCalgary Aquatic Centre https://maps.google.com/?q=UCalgary+Aquatic+Centre+Calgary
@@ -411,8 +411,8 @@ DESCRIPTION:NOTE: An asterisk (*) indicates limited lanes available.\n\nDETAILS:
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
-UID:pool-20261218-1900-50m@ucalgary.ca
-DTSTART;TZID=America/Edmonton:20261218T190000
+UID:pool-20261218-1930-50m@ucalgary.ca
+DTSTART;TZID=America/Edmonton:20261218T193000
 DTEND;TZID=America/Edmonton:20261218T210000
 SUMMARY:50m Lane Swim* (Adult/Youth)
 LOCATION:UCalgary Aquatic Centre https://maps.google.com/?q=UCalgary+Aquatic+Centre+Calgary
